@@ -1,0 +1,28 @@
+/*==========================
+Homepage
+===========================*/
+body #tagline {
+  font-size: 3.2em;
+  font-family: var(--fontFamily);
+  text-align: center;
+  font-weight: 400;
+}
+@media (min-width: 600px) and (max-width: 899px) {
+  body #tagline {
+    font-size: 2.8em;
+  }
+}
+@media (max-width: 599px) {
+  body #tagline {
+    font-size: 2.8em;
+  }
+}
+body #query {
+  display: block;
+  max-width: 450px;
+  width: 100%;
+  padding: 10px 15px;
+  margin: 0 auto;
+  font-size: inherit;
+  font-family: inherit;
+}

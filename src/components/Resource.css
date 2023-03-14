@@ -1,0 +1,73 @@
+/*==========================
+Resource Cards
+===========================*/
+#resources {
+  max-width: 900px;
+  margin: 75px auto;
+}
+.resource {
+  padding: 30px 20px;
+  border-bottom: 1px solid var(--bdC);
+  line-height: 1.5em;
+}
+.resource p {
+  margin: 0;
+}
+.resource > :not(:last-child) {
+  margin-bottom: 20px;
+}
+.resource .type {
+  text-transform: uppercase;
+  font-size: 0.9em;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.resource .title {
+  font-family: var(--fontFamily);
+  font-size: 1.2em;
+  font-weight: 600;
+  line-height: 1.8em;
+}
+.resource .title span.hl {
+  background-color: #ffba3c;
+}
+.resource .authors {
+  font-weight: 600;
+}
+.resource .publication {
+  font-style: italic;
+}
+.resource .button {
+  margin-top: 20px;
+}
+.resource .button a {
+  text-decoration: none;
+  padding: 5px 10px;
+  color: var(--textC);
+  background-color: transparent;
+  font-weight: 600;
+  border: 2px solid var(--textC);
+  display: flex;
+  width: -webkit-max-content;
+  width: max-content;
+  transition: 0.2s ease;
+}
+.resource .button a:hover {
+  color: var(--bgC);
+  background-color: var(--textC);
+}
+.resource .tags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  grid-gap: 10px;
+  gap: 10px;
+}
+.resource .tags .tag {
+  background-color: var(--bgC3);
+  padding: 5px 10px;
+}
+.loading {
+  text-align: center;
+  margin: 75px auto;
+}
