@@ -5,16 +5,21 @@ import reactStringReplace from "react-string-replace";
 import remapZoteroData from "../utils/remapZoteroData";
 
 function Homepage() {
+    if (localStorage.getItem("DataStructure") != 2) {
+        localStorage.clear();
+        localStorage.setItem("DataStructure", 2);
+    }
+
     const [url, setUrl] = React.useState(
         "https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3"
     );
     const [zoteroData, setZoteroData] = React.useState(
         JSON.parse(localStorage.getItem("zoteroData")) || []
     );
-    function checkboxObjects(prop) {
+    function checkboxObjects(prop, inputData) {
         const uniqueValues = [
             ...new Set(
-                zoteroData.reduce((propsArray, resource) => {
+                inputData.reduce((propsArray, resource) => {
                     return propsArray.concat(resource[prop]);
                 }, [])
             ),
@@ -25,17 +30,17 @@ function Homepage() {
         }));
         return checkboxObjects;
     }
-    const uniqueItemTypes = checkboxObjects("itemType");
-    const uniqueTags = checkboxObjects("tags");
-    const queriesTemplate = {
-        searchTerm: "",
-        itemTypes: uniqueItemTypes,
-        tags: uniqueTags,
-    };
-    const [queries, setQueries] = React.useState(queriesTemplate);
+    function queriesTemplate(inputData) {
+        return {
+            searchTerm: "",
+            itemTypes: checkboxObjects("itemType", inputData),
+            tags: checkboxObjects("tags", inputData),
+        };
+    }
+    const [queries, setQueries] = React.useState(queriesTemplate(zoteroData));
     const [matches, setMatches] = React.useState([]);
-    const [version, setVersion] = React.useState(
-        localStorage.getItem("version") || 0
+    const [zoteroVersion, setZoteroVersion] = React.useState(
+        localStorage.getItem("zoteroVersion") || 0
     );
 
     React.useEffect(() => {
@@ -62,14 +67,15 @@ function Homepage() {
                     remapZoteroData(dataDump)
                 );
                 setZoteroData(newZoteroData);
-                setVersion(response.headers.get("last-modified-version"));
+                setZoteroVersion(response.headers.get("last-modified-version"));
+                setQueries(queriesTemplate(newZoteroData));
                 const linkHeader = response.headers.get("link");
                 const nextLink =
                     linkHeader.match(/(?<=<)([^<]*)(?=>; rel="next")/) || "";
                 if (nextLink) {
                     if (
-                        version === 0 ||
-                        version ===
+                        zoteroVersion === 0 ||
+                        zoteroVersion ===
                             response.headers.get("last-modified-version")
                     ) {
                         setUrl(nextLink[1]);
@@ -80,7 +86,7 @@ function Homepage() {
                         );
                     }
                 } else {
-                    localStorage.setItem("version", version);
+                    localStorage.setItem("zoteroVersion", zoteroVersion);
                     localStorage.setItem(
                         "zoteroData",
                         JSON.stringify(newZoteroData)
@@ -101,12 +107,12 @@ function Homepage() {
     React.useEffect(() => {
         // Retrieves data that has changed since last
         // sync with Zotero and patces the database
-        const patchUrl = `https://api.zotero.org/groups/4433711/items?since=${version}&limit=100&format=json&v=3`;
+        const patchUrl = `https://api.zotero.org/groups/4433711/items?since=${zoteroVersion}&limit=100&format=json&v=3`;
         const patchData = async () => {
             const response = await fetch(patchUrl, {
                 headers: {
                     "Zotero-API-Key": "JS6XoBPTFL0BG37rVBWS6rMR",
-                    "If-Modified-Since-Version": version,
+                    "If-Modified-Since-Version": zoteroVersion,
                 },
                 cache: "default",
             });
@@ -119,9 +125,9 @@ function Homepage() {
                     );
                 }
             } else {
-                setVersion(response.headers.get("Last-Modified-Version"));
+                setZoteroVersion(response.headers.get("Last-Modified-Version"));
                 localStorage.setItem(
-                    "version",
+                    "zoteroVersion",
                     response.headers.get("Last-Modified-Version")
                 );
                 const patches = await response.json();
@@ -137,11 +143,12 @@ function Homepage() {
                         "zoteroData",
                         JSON.stringify(patchedData)
                     );
+                    setQueries(queriesTemplate(patchedData));
                     matchQueries(patchedData, queries);
                 }
             }
         };
-        if (localStorage.getItem("version")) {
+        if (localStorage.getItem("zoteroVersion")) {
             patchData().catch((error) =>
                 console.error(
                     `Zotero patch request failed with error: ${error}`
@@ -288,7 +295,7 @@ function Homepage() {
                     <h1 id="tagline">
                         A <em>library of resources</em> on pastoralism in India
                     </h1>
-                    {version != 0 && (
+                    {zoteroVersion != 0 && (
                         <div id="queryContainer">
                             <div id="queryInputs">
                                 <div id="searchBox">
