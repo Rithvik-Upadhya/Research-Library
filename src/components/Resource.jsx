@@ -2,44 +2,40 @@ import React from "react";
 import "./Resource.css";
 
 export default function Resource(props) {
-    const authors = props.creators
-        ? props.creators.map(
-              (author) => `${author.firstName} ${author.lastName}`
-          )
-        : [];
-    const camelCaseToWords = (str) => {
-        return str
-            .match(/^[a-z]+|[A-Z][a-z]*/g)
-            .map(function (word) {
-                return word[0].toUpperCase() + word.substr(1).toLowerCase();
-            })
-            .join(" ");
-    };
     const publicationInfo = [
         props.websiteTitle,
         props.institution,
         props.publisher,
         props.series,
-        props.seriesNumber,
         props.volume ? `Vol. ${props.volume}` : "",
         props.edition ? `No. ${props.edition}` : "",
         props.pages ? `p. ${props.pages}` : "",
     ]
         .filter(Boolean)
         .join(", ");
-    const tagEls = props.tags.map((tag) => (
-        <span className="tag" key={tag.tag}>
-            {tag.tag}
+    const tagEls = props.tags.map((tag, i) => (
+        <span className="tag" key={i}>
+            {tag}
+        </span>
+    ));
+    const authorEls = props.authors.map((author, i, authors) => (
+        <span className="author" key={i}>
+            {author}
+            {i < authors.length - 1 ? ", " : ""}
         </span>
     ));
     return (
         <div className="resource">
-            <p className="type">{camelCaseToWords(props.itemType)}</p>
+            <p className="type">
+                {props.itemType}
+                {props.year ? " | " : ""}
+                {props.year ? props.year : ""}
+            </p>
             <p className="title">{props.title}</p>
-            {authors.length > 0 && (
+            {props.authors.length > 0 && (
                 <p className="authors">
-                    {authors.length > 1 ? "Authors:" : "Author:"}{" "}
-                    {authors.join(", ")}
+                    {props.authors.length > 1 ? "Authors: " : "Author: "}
+                    {authorEls}
                 </p>
             )}
             {publicationInfo && (

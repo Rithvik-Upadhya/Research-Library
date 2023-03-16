@@ -6,6 +6,8 @@ body #tagline {
   font-family: var(--fontFamily);
   text-align: center;
   font-weight: 400;
+  max-width: 560px;
+  margin: 0 auto;
 }
 @media (min-width: 600px) and (max-width: 899px) {
   body #tagline {
@@ -17,12 +19,114 @@ body #tagline {
     font-size: 2.8em;
   }
 }
-body #query {
+body #queryContainer {
+  position: relative;
+  height: 50px;
+  margin: 50px auto;
+  max-width: 500px;
+  width: 100%;
+}
+body #queryContainer #queryInputs {
+  position: absolute;
+  height: auto;
+  max-height: 50px;
+  width: 100%;
+  z-index: 3;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--bdC);
+  background-color: var(--bgC);
+  border-radius: var(--bdRadius);
+  transition: max-height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+body #queryContainer #queryInputs:hover,
+body #queryContainer #queryInputs:focus-within {
+  max-height: 750px;
+  transition: max-height 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body #queryContainer #queryInputs:hover #searchBox::after,
+body #queryContainer #queryInputs:focus-within #searchBox::after {
+  opacity: 1;
+}
+body #queryContainer #queryInputs:hover #queryOptions,
+body #queryContainer #queryInputs:focus-within #queryOptions {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s, visibility 0s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+}
+body #queryContainer #queryInputs #searchBox #searchTerm {
   display: block;
-  max-width: 450px;
   width: 100%;
   padding: 10px 15px;
+  height: 50px;
   margin: 0 auto;
   font-size: inherit;
   font-family: inherit;
+  border: none;
+  outline: none;
+}
+body #queryContainer #queryInputs #searchBox::after {
+  content: "";
+  display: block;
+  height: 1px;
+  width: 98%;
+  background-color: var(--bdC);
+  opacity: 0;
+  margin: 5px auto;
+  transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body #queryContainer #queryInputs #queryOptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, auto));
+  margin: 25px;
+  grid-gap: 25px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s, visibility 0s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s;
+}
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxesTitle {
+  margin: 0 0 10px 0;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes {
+  position: relative;
+  max-height: 200px;
+  overflow-y: scroll;
+  border: 1px solid var(--bdC);
+  border-radius: var(--bdRadius);
+}
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes:focus {
+  outline: 2px solid var(--secondaryC);
+}
+@media (max-width: 599px) {
+  body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes {
+    grid-column: 1/3;
+  }
+}
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .checkbox input {
+  position: absolute;
+  opacity: 0;
+}
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .checkbox label {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  border-left: 0px solid var(--secondaryC);
+  transition: border 0.2s ease;
+}
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .checkbox input:checked + label {
+  background-color: var(--primaryC);
+  color: var(--textC2);
+}
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .checkbox input:focus + label,
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .checkbox label:hover {
+  border-left: 5px solid var(--secondaryC);
+}
+body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .checkbox:nth-child(2n) label {
+  background-color: var(--bgC3);
+}
+body #queryContainer #queryInputs #queryOptions #queryCount {
+  margin: 0;
+  font-weight: 600;
 }
