@@ -249,7 +249,7 @@ function Homepage() {
             ? matches
             : zoteroData;
     const resourceEls = resources.map((resource) => {
-        return <Resource {...resource} />;
+        return <Resource {...resource} id={resource.key} />;
     });
 
     // optional: add to make checked items appear on top
