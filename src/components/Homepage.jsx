@@ -1,8 +1,9 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import "./Homepage.css";
 import Resource from "./Resource";
 import reactStringReplace from "react-string-replace";
 import remapZoteroData from "../utils/remapZoteroData";
+import { getAllZoteroData, getZoteroFavourites } from "../api";
 
 function Homepage() {
     if (localStorage.getItem("DataStructure") != 2) {
@@ -10,10 +11,10 @@ function Homepage() {
         localStorage.setItem("DataStructure", 2);
     }
 
-    const [url, setUrl] = React.useState(
+    const [url, setUrl] = useState(
         "https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3"
     );
-    const [zoteroData, setZoteroData] = React.useState(
+    const [zoteroData, setZoteroData] = useState(
         JSON.parse(localStorage.getItem("zoteroData")) || []
     );
     function checkboxObjects(prop, inputData) {
@@ -37,13 +38,13 @@ function Homepage() {
             tags: checkboxObjects("tags", inputData),
         };
     }
-    const [queries, setQueries] = React.useState(queriesTemplate(zoteroData));
-    const [matches, setMatches] = React.useState([]);
-    const [zoteroVersion, setZoteroVersion] = React.useState(
+    const [queries, setQueries] = useState(queriesTemplate(zoteroData));
+    const [matches, setMatches] = useState([]);
+    const [zoteroVersion, setZoteroVersion] = useState(
         localStorage.getItem("zoteroVersion") || 0
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchData = async () => {
             const response = await fetch(url, {
                 headers: {
@@ -104,7 +105,12 @@ function Homepage() {
         }
     }, [url]);
 
-    React.useEffect(() => {
+    useEffect(() => {
+        getAllZoteroData.then((res) => console.log(res));
+        getZoteroFavourites.then((res) => console.log(res));
+    }, []);
+
+    useEffect(() => {
         // Retrieves data that has changed since last
         // sync with Zotero and patces the database
         const patchUrl = `https://api.zotero.org/groups/4433711/items?since=${zoteroVersion}&limit=100&format=json&v=3`;

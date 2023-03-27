@@ -9,6 +9,8 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "faunadb": "^4.8.0",
+        "mongodb": "^5.1.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-string-replace": "^1.1.0"
