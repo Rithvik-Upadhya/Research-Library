@@ -1,21 +1,10 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import "./Homepage.css";
 import Resource from "./Resource";
 import reactStringReplace from "react-string-replace";
-import remapZoteroData from "../utils/remapZoteroData";
 
 function Homepage() {
-    if (localStorage.getItem("DataStructure") != 2) {
-        localStorage.clear();
-        localStorage.setItem("DataStructure", 2);
-    }
-
-    const [url, setUrl] = React.useState(
-        "https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3"
-    );
-    const [zoteroData, setZoteroData] = React.useState(
-        JSON.parse(localStorage.getItem("zoteroData")) || []
-    );
+    const [zoteroData, setZoteroData] = useState([]);
     function checkboxObjects(prop, inputData) {
         const uniqueValues = [
             ...new Set(
@@ -37,124 +26,26 @@ function Homepage() {
             tags: checkboxObjects("tags", inputData),
         };
     }
-    const [queries, setQueries] = React.useState(queriesTemplate(zoteroData));
-    const [matches, setMatches] = React.useState([]);
-    const [zoteroVersion, setZoteroVersion] = React.useState(
-        localStorage.getItem("zoteroVersion") || 0
-    );
+    const [queries, setQueries] = useState(queriesTemplate(zoteroData));
+    const [matches, setMatches] = useState([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch(url, {
-                headers: {
-                    "Zotero-API-Key": "JS6XoBPTFL0BG37rVBWS6rMR",
-                },
-                cache: "default",
-            });
-
-            if (!response.ok) {
-                if (response.status === 304) {
-                    console.log("Data already up to date");
-                } else {
-                    console.error(
-                        `Zotero fetch request failed with response status: ${response.status}`
-                    );
-                }
-            } else {
-                const dataDump = await response.json();
-                console.log(remapZoteroData(dataDump), zoteroData);
-                const newZoteroData = zoteroData.concat(
-                    remapZoteroData(dataDump)
-                );
-                setZoteroData(newZoteroData);
-                setZoteroVersion(response.headers.get("last-modified-version"));
-                setQueries(queriesTemplate(newZoteroData));
-                const linkHeader = response.headers.get("link");
-                const nextLink =
-                    linkHeader.match(/(?<=<)([^<]*)(?=>; rel="next")/) || "";
-                if (nextLink) {
-                    if (
-                        zoteroVersion === 0 ||
-                        zoteroVersion ===
-                            response.headers.get("last-modified-version")
-                    ) {
-                        setUrl(nextLink[1]);
-                    } else {
-                        setZoteroData([]);
-                        setUrl(
-                            "https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3"
-                        );
-                    }
-                } else {
-                    localStorage.setItem("zoteroVersion", zoteroVersion);
-                    localStorage.setItem(
-                        "zoteroData",
-                        JSON.stringify(newZoteroData)
-                    );
-                    matchQueries(newZoteroData, queries);
-                }
-            }
-        };
-        if (!localStorage.getItem("zoteroData")) {
-            fetchData().catch((error) =>
-                console.error(
-                    `Zotero fetch request failed with error: ${error}`
-                )
+            const response = await fetch("/.netlify/functions/getZoteroData");
+            const data = await response.json();
+            data.sort(
+                (a, b) => Date.parse(b.dateAdded) - Date.parse(a.dateAdded)
             );
-        }
-    }, [url]);
-
-    React.useEffect(() => {
-        // Retrieves data that has changed since last
-        // sync with Zotero and patces the database
-        const patchUrl = `https://api.zotero.org/groups/4433711/items?since=${zoteroVersion}&limit=100&format=json&v=3`;
-        const patchData = async () => {
-            const response = await fetch(patchUrl, {
-                headers: {
-                    "Zotero-API-Key": "JS6XoBPTFL0BG37rVBWS6rMR",
-                    "If-Modified-Since-Version": zoteroVersion,
-                },
-                cache: "default",
-            });
-            if (!response.ok) {
-                if (response.status === 304) {
-                    console.log("Data already up to date");
-                } else {
-                    console.error(
-                        `Zotero patch request failed with response status: ${response.status}`
-                    );
-                }
-            } else {
-                setZoteroVersion(response.headers.get("Last-Modified-Version"));
-                localStorage.setItem(
-                    "zoteroVersion",
-                    response.headers.get("Last-Modified-Version")
-                );
-                const patches = await response.json();
-                const patchKeys = patches.map((patch) => patch.key);
-                const remappedPatches = remapZoteroData(patches);
-                if (patches.length > 0) {
-                    const patchedData = zoteroData.map((resource) => {
-                        const index = patchKeys.indexOf(resource.key);
-                        return index < 0 ? resource : remappedPatches[index];
-                    });
-                    setZoteroData(patchedData);
-                    localStorage.setItem(
-                        "zoteroData",
-                        JSON.stringify(patchedData)
-                    );
-                    setQueries(queriesTemplate(patchedData));
-                    matchQueries(patchedData, queries);
-                }
-            }
+            console.log(data);
+            setZoteroData(data);
+            setQueries(queriesTemplate(data));
+            matchQueries(data, queriesTemplate(data));
         };
-        if (localStorage.getItem("zoteroVersion")) {
-            patchData().catch((error) =>
-                console.error(
-                    `Zotero patch request failed with error: ${error}`
-                )
-            );
-        }
+        fetchData().catch((error) =>
+            console.error(
+                `Getting data from server failed with error: ${error}`
+            )
+        );
     }, []);
 
     function createRegex(searchTerm) {
@@ -295,7 +186,7 @@ function Homepage() {
                     <h1 id="tagline">
                         A <em>library of resources</em> on pastoralism in India
                     </h1>
-                    {zoteroVersion != 0 && (
+                    {zoteroData.length != 0 && (
                         <div id="queryContainer">
                             <div id="queryInputs">
                                 <div id="searchBox">
