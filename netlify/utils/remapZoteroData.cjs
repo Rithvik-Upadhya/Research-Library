@@ -1,5 +1,5 @@
-import camelCaseToWords from "./camelCaseToWords";
-import capitalize from "./capitalize";
+const camelCaseToWords = require("./camelCaseToWords.cjs");
+const capitalize = require("./capitalize.cjs");
 
 function remapAuthors(authors) {
     return authors
@@ -16,10 +16,10 @@ function remapTags(tags) {
 }
 
 function checkFav(tags) {
-    return remapTags(tags).includes("favourite");
+    return remapTags(tags).includes("Favourite");
 }
 
-export default function remapZoteroData(inputData) {
+const remapZoteroData = (inputData) => {
     const remappedData = inputData.map(({ data }) => ({
         key: data.key,
         version: data.version,
@@ -43,4 +43,6 @@ export default function remapZoteroData(inputData) {
         dateModified: getDate(data.dateModified),
     }));
     return remappedData;
-}
+};
+
+module.exports = remapZoteroData;
