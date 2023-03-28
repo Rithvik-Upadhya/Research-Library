@@ -6,6 +6,7 @@ import reactStringReplace from "react-string-replace";
 function Homepage() {
     const [zoteroData, setZoteroData] = useState([]);
     const [favourites, setFavourites] = useState([]);
+    const [images, setImages] = useState([]);
     function checkboxObjects(prop, inputData) {
         const uniqueValues = [
             ...new Set(
@@ -37,10 +38,26 @@ function Homepage() {
             data.sort(
                 (a, b) => Date.parse(b.dateAdded) - Date.parse(a.dateAdded)
             );
-            console.log(data);
-            console.log(data.filter((item) => item.favourite));
-            setFavourites(data.filter((item) => item.favourite));
-            setZoteroData(data);
+            const filteredData = data.reduce(
+                (result, currentItem) => {
+                    result[
+                        currentItem.itemType === "Attachment"
+                            ? "images"
+                            : "items"
+                    ].push(currentItem);
+                    return result;
+                },
+                { items: [], images: [] }
+            );
+            const favouriteData = filteredData.items.filter(
+                (item) => item.favourite
+            );
+            console.log(filteredData.items);
+            console.log(favouriteData);
+            console.log(filteredData.images);
+            setFavourites(favouriteData);
+            setZoteroData(filteredData.items);
+            setImages(filteredData.images);
             setQueries(queriesTemplate(data));
             matchQueries(data, queriesTemplate(data));
         };

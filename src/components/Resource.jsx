@@ -71,9 +71,7 @@ export default function Resource(props) {
             <span className="tag" key={i}>
                 {tag}
             </span>
-        ) : (
-            <></>
-        )
+        ) : null
     );
     const authorEls = props.authors.map((author, i, authors) => (
         <span className="author" key={i}>

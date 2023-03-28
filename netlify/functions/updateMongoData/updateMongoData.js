@@ -1,13 +1,12 @@
-const { schedule } = require("@netlify/functions");
-const { MongoClient } = require("mongodb");
-const remapZoteroData = require("../../utils/remapZoteroData.cjs");
-require("dotenv").config();
+import { schedule } from "@netlify/functions";
+import { MongoClient } from "mongodb";
+import remapZoteroData from "../../utils/remapZoteroData";
 
 const mongoClient = new MongoClient(process.env.MONGODB_URI);
 
 const clientPromise = mongoClient.connect();
 
-module.exports.handler = schedule("@hourly", async (event) => {
+export const handler = schedule("@hourly", async (event) => {
     const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
     const collection = database.collection(process.env.MONGODB_COLLECTION);
     const newestItem = await collection

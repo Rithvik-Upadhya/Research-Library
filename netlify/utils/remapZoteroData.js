@@ -1,5 +1,5 @@
-const camelCaseToWords = require("./camelCaseToWords.cjs");
-const capitalize = require("./capitalize.cjs");
+import camelCaseToWords from "./camelCaseToWords.js";
+import capitalize from "./capitalize.js";
 
 function remapAuthors(authors) {
     return authors
@@ -23,6 +23,7 @@ const remapZoteroData = (inputData) => {
     const remappedData = inputData.map(({ data }) => ({
         key: data.key,
         version: data.version,
+        parentItem: data.parentItem,
         itemType: camelCaseToWords(data.itemType),
         title: data.title,
         authors: remapAuthors(data.creators),
@@ -45,4 +46,4 @@ const remapZoteroData = (inputData) => {
     return remappedData;
 };
 
-module.exports = remapZoteroData;
+export default remapZoteroData;
