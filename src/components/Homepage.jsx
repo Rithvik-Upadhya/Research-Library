@@ -5,6 +5,7 @@ import reactStringReplace from "react-string-replace";
 
 function Homepage() {
     const [zoteroData, setZoteroData] = useState([]);
+    const [favourites, setFavourites] = useState([]);
     function checkboxObjects(prop, inputData) {
         const uniqueValues = [
             ...new Set(
@@ -37,6 +38,8 @@ function Homepage() {
                 (a, b) => Date.parse(b.dateAdded) - Date.parse(a.dateAdded)
             );
             console.log(data);
+            console.log(data.filter((item) => item.favourite));
+            setFavourites(data.filter((item) => item.favourite));
             setZoteroData(data);
             setQueries(queriesTemplate(data));
             matchQueries(data, queriesTemplate(data));
@@ -138,7 +141,7 @@ function Homepage() {
         queries.itemTypes.some((itemType) => itemType.checked) ||
         queries.tags.some((tag) => tag.checked)
             ? matches
-            : zoteroData;
+            : favourites;
     const resourceEls = resources.map((resource) => {
         return <Resource {...resource} id={resource.key} />;
     });

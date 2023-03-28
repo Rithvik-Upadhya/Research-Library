@@ -1,6 +1,6 @@
 const { schedule } = require("@netlify/functions");
 const { MongoClient } = require("mongodb");
-const { default: remapZoteroData } = require("../../utils/remapZoteroData");
+const remapZoteroData = require("../../utils/remapZoteroData.cjs");
 require("dotenv").config();
 
 const mongoClient = new MongoClient(process.env.MONGODB_URI);
@@ -66,7 +66,6 @@ module.exports.handler = schedule("@hourly", async (event) => {
 
     const bulkWritePayload = deletePayload.concat(patchPayload);
     console.log(bulkWritePayload);
-
     const bulkWriteResult =
         bulkWritePayload.length &&
         (await collection.bulkWrite(bulkWritePayload, {
