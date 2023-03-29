@@ -8,7 +8,10 @@ export async function handler(event) {
     try {
         const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
         const collection = database.collection(process.env.MONGODB_COLLECTION);
-        const results = await collection.find({}).toArray();
+        const results = await collection
+            .find({})
+            .sort({ dateAdded: -1 })
+            .toArray();
 
         return {
             statusCode: 200,

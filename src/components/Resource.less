@@ -84,6 +84,21 @@ Resource Cards
 }
 
 .resource {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    @media (max-width: 699px) {
+        flex-wrap: wrap;
+    }
+    > img {
+        width: 250px;
+        height: 250px;
+        display: block;
+        -o-object-fit: cover;
+        object-fit: cover;
+        box-shadow: var(--shadow);
+        border-radius: calc(var(--bdRadius) * 2);
+    }
     padding: 30px 20px;
     border-bottom: 1px solid var(--bdC);
     line-height: 1.5em;
@@ -92,8 +107,10 @@ Resource Cards
         margin: 0;
     }
 
-    > :not(:last-child) {
-        margin-bottom: 20px;
+    .resource-info {
+        > :not(:last-child) {
+            margin-bottom: 20px;
+        }
     }
 
     .flag {
