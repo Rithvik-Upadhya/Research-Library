@@ -73,8 +73,8 @@ export const handler = schedule("@hourly", async (event) => {
         }));
     console.log(bulkWriteResult);
 
-    const eventBody = JSON.parse(event.body);
-    console.log(`Next function run at ${eventBody.next_run}.`);
+    // const eventBody = JSON.parse(event.body);
+    // console.log(`Next function run at ${eventBody.next_run}.`);
     return {
         statusCode: 200,
     };
