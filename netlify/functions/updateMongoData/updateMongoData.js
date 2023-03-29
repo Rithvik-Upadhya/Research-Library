@@ -27,7 +27,14 @@ export const handler = schedule("*/5 * * * *", async (event) => {
             "If-Modified-Since-Version": currentDBVersion,
         },
     });
-    console.log(patchedDataResponse);
+    const deletedDataResponse = await fetch(deletedDataURL, {
+        headers: {
+            "Zotero-API-Key": process.env.ZOTERO_API_KEY,
+        },
+    });
+    const patchedItems = await patchedDataResponse.json();
+    console.log(deletedDataResponse);
+    console.log(patchedItems);
     // const [patchedDataResponse, deletedDataResponse] = await Promise.all([
     //     fetch(patchedDataURL, {
     //         headers: {
