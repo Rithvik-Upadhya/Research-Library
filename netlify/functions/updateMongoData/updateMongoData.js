@@ -15,7 +15,7 @@ export const handler = schedule("*/2 * * * *", async (event) => {
         .sort({ version: -1 })
         .limit(1)
         .toArray();
-    const currentDBVersion = newestItem[0].version;
+    const currentDBVersion = 80 || newestItem[0].version;
     console.log(currentDBVersion);
 
     const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}`;
