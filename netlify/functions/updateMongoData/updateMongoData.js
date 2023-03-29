@@ -17,7 +17,7 @@ export async function handler(event) {
     const currentDBVersion = 80 || newestItem[0].version;
     console.log(currentDBVersion);
 
-    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?format=json&limit=100&v=3&since=${currentDBVersion}`;
+    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?format=json`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
 
     const patchedDataResponse = await fetch(patchedDataURL, {
@@ -33,6 +33,8 @@ export async function handler(event) {
     });
 
     console.log(patchedDataResponse);
+
+    console.log(await deletedDataResponse.json());
 
     // const [patchedDataResponse, deletedDataResponse] = await Promise.all([
     //     fetch(patchedDataURL, {
@@ -86,8 +88,8 @@ export async function handler(event) {
     //     }));
     // console.log(bulkWriteResult);
 
-    const eventBody = JSON.parse(event.body);
-    console.log(`Next function run at ${eventBody.next_run}.`);
+    // const eventBody = JSON.parse(event.body);
+    // console.log(`Next function run at ${eventBody.next_run}.`);
     return {
         statusCode: 200,
     };
