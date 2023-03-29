@@ -15,7 +15,7 @@ export const handler = schedule("*/2 * * * *", async (event) => {
         .sort({ version: -1 })
         .limit(1)
         .toArray();
-    const currentDBVersion = 80 || newestItem[0].version;
+    const currentDBVersion = newestItem[0].version;
     console.log(currentDBVersion);
 
     const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}`;
@@ -26,7 +26,9 @@ export const handler = schedule("*/2 * * * *", async (event) => {
             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
             "If-Modified-Since-Version": currentDBVersion,
         },
-    }).then((res) => console.log(res));
+    })
+        .then((res) => res.text())
+        .then((data) => console.log(data));
     const deletedDataResponse = await fetch(deletedDataURL, {
         headers: {
             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
