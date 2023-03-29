@@ -18,7 +18,8 @@ export const handler = schedule("*/2 * * * *", async (event) => {
     const currentDBVersion = 80 || newestItem[0].version;
     console.log(currentDBVersion);
 
-    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?format=json&limit=100&v=3&since=${currentDBVersion}&format=json`;
+    // const patchedDataURL = `https://api.zotero.org/groups/4433711/items?format=json&limit=100&v=3&since=${currentDBVersion}&format=json`;
+    const patchedDataURL = "https://jsonplaceholder.typicode.com/todos";
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
 
     const patchedDataResponse = await fetch(patchedDataURL, {
