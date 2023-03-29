@@ -17,7 +17,7 @@ export async function handler(event) {
     const currentDBVersion = 80 || newestItem[0].version;
     console.log(currentDBVersion);
 
-    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?format=json`;
+    const patchedDataURL = `https://api.zotero.org/groups/4433711/items`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
 
     const patchedDataResponse = await fetch(patchedDataURL, {
