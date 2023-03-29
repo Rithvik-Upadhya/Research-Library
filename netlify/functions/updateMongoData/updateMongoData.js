@@ -65,12 +65,12 @@ export const handler = schedule("@hourly", async (event) => {
 
     const bulkWritePayload = deletePayload.concat(patchPayload);
     console.log(bulkWritePayload);
-    const bulkWriteResult = bulkWritePayload.length
-        ? await collection.bulkWrite(bulkWritePayload, {
-              ordered: false,
-          })
-        : "Data already up to date";
-    console.log(bulkWriteResult);
+    // const bulkWriteResult = bulkWritePayload.length
+    //     ? await collection.bulkWrite(bulkWritePayload, {
+    //           ordered: false,
+    //       })
+    //     : "Data already up to date";
+    // console.log(bulkWriteResult);
 
     const eventBody = JSON.parse(event.body);
     console.log(`Next function run at ${eventBody.next_run}.`);
