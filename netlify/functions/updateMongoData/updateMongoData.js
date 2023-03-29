@@ -21,6 +21,13 @@ export const handler = schedule("*/5 * * * *", async (event) => {
     const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
 
+    const patchedDataResponse = await fetch(patchedDataURL, {
+        headers: {
+            "Zotero-API-Key": process.env.ZOTERO_API_KEY,
+            "If-Modified-Since-Version": currentDBVersion,
+        },
+    });
+    console.log(patchedDataResponse);
     // const [patchedDataResponse, deletedDataResponse] = await Promise.all([
     //     fetch(patchedDataURL, {
     //         headers: {
