@@ -7,7 +7,7 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI);
 
 const clientPromise = mongoClient.connect();
 
-export const handler = schedule("*/5 * * * *", async (event) => {
+export const handler = schedule("*/2 * * * *", async (event) => {
     const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
     const collection = database.collection(process.env.MONGODB_COLLECTION);
     const newestItem = await collection
@@ -32,9 +32,7 @@ export const handler = schedule("*/5 * * * *", async (event) => {
             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
         },
     });
-    const patchedItems = await patchedDataResponse.json();
-    console.log(deletedDataResponse);
-    console.log(patchedItems);
+
     // const [patchedDataResponse, deletedDataResponse] = await Promise.all([
     //     fetch(patchedDataURL, {
     //         headers: {
@@ -87,9 +85,8 @@ export const handler = schedule("*/5 * * * *", async (event) => {
     //     }));
     // console.log(bulkWriteResult);
 
-    // const eventBody = JSON.parse(event.body);
-    // console.log(`Next function run at ${eventBody.next_run}.`);
-    console.log(event.body);
+    const eventBody = JSON.parse(event.body);
+    console.log(`Next function run at ${eventBody.next_run}.`);
     return {
         statusCode: 200,
     };
