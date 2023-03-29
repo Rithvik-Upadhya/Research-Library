@@ -18,7 +18,7 @@ export const handler = schedule("*/2 * * * *", async (event) => {
     const currentDBVersion = 80 || newestItem[0].version;
     console.log(currentDBVersion);
 
-    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}`;
+    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?format=json&limit=100&v=3&since=${currentDBVersion}&format=json`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
 
     const patchedDataResponse = await fetch(patchedDataURL, {
@@ -27,7 +27,7 @@ export const handler = schedule("*/2 * * * *", async (event) => {
             "If-Modified-Since-Version": currentDBVersion,
         },
     });
-    console.log(await patchedDataResponse.text());
+    console.log(patchedDataResponse);
     console.log(patchedDataResponse.body);
     const deletedDataResponse = await fetch(deletedDataURL, {
         headers: {
