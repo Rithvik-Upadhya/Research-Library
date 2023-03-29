@@ -34,7 +34,7 @@ export async function handler(event) {
 
     console.log(patchedDataResponse);
 
-    console.log(await deletedDataResponse.json());
+    console.log(await deletedDataResponse.text());
 
     // const [patchedDataResponse, deletedDataResponse] = await Promise.all([
     //     fetch(patchedDataURL, {
