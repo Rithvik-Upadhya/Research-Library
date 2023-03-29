@@ -26,9 +26,9 @@ export const handler = schedule("*/2 * * * *", async (event) => {
             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
             "If-Modified-Since-Version": currentDBVersion,
         },
-    })
-        .then((res) => res.text())
-        .then((data) => console.log(data));
+    });
+    console.log(await patchedDataResponse.text());
+    console.log(patchedDataResponse.body);
     const deletedDataResponse = await fetch(deletedDataURL, {
         headers: {
             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
