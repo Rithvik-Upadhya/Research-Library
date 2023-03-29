@@ -7,7 +7,7 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI);
 
 const clientPromise = mongoClient.connect();
 
-export const handler = schedule("@hourly", async (event) => {
+export const handler = schedule("*/5 * * * *", async (event) => {
     const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
     const collection = database.collection(process.env.MONGODB_COLLECTION);
     const newestItem = await collection
@@ -76,7 +76,6 @@ export const handler = schedule("@hourly", async (event) => {
     // const eventBody = JSON.parse(event.body);
     // console.log(`Next function run at ${eventBody.next_run}.`);
     console.log(event.body);
-    console.log(currentDBVersion);
     return {
         statusCode: 200,
     };
