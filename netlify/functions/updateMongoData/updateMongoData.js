@@ -1,6 +1,7 @@
 import { schedule } from "@netlify/functions";
 import { MongoClient } from "mongodb";
 import remapZoteroData from "../../utils/remapZoteroData";
+import fetch from "node-fetch";
 
 const mongoClient = new MongoClient(process.env.MONGODB_URI);
 
@@ -25,9 +26,7 @@ export const handler = schedule("*/2 * * * *", async (event) => {
             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
             "If-Modified-Since-Version": currentDBVersion,
         },
-    })
-        .then((res) => res.json())
-        .then((data) => console.log(data));
+    }).then((res) => console.log(res));
     const deletedDataResponse = await fetch(deletedDataURL, {
         headers: {
             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
