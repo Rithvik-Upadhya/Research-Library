@@ -75,6 +75,7 @@ export const handler = schedule("@hourly", async (event) => {
 
     // const eventBody = JSON.parse(event.body);
     // console.log(`Next function run at ${eventBody.next_run}.`);
+    console.log(event.body);
     return {
         statusCode: 200,
     };
