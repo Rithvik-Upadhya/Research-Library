@@ -1,7 +1,6 @@
 import { schedule } from "@netlify/functions";
 import { MongoClient } from "mongodb";
 import remapZoteroData from "../../utils/remapZoteroData";
-import fetch from "node-fetch";
 
 const mongoClient = new MongoClient(process.env.MONGODB_URI);
 
