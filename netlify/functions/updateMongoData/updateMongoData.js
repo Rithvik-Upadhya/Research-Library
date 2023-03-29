@@ -21,61 +21,62 @@ export const handler = schedule("@hourly", async (event) => {
     const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
 
-    const [patchedDataResponse, deletedDataResponse] = await Promise.all([
-        fetch(patchedDataURL, {
-            headers: {
-                "Zotero-API-Key": process.env.ZOTERO_API_KEY,
-                "If-Modified-Since-Version": currentDBVersion,
-            },
-        }),
-        fetch(deletedDataURL, {
-            headers: {
-                "Zotero-API-Key": process.env.ZOTERO_API_KEY,
-            },
-        }),
-    ]);
+    // const [patchedDataResponse, deletedDataResponse] = await Promise.all([
+    //     fetch(patchedDataURL, {
+    //         headers: {
+    //             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
+    //             "If-Modified-Since-Version": currentDBVersion,
+    //         },
+    //     }),
+    //     fetch(deletedDataURL, {
+    //         headers: {
+    //             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
+    //         },
+    //     }),
+    // ]);
 
-    const [patchedItems, deletedData] = await Promise.all([
-        patchedDataResponse.ok && patchedDataResponse.json(),
-        deletedDataResponse.json(),
-    ]);
+    // const [patchedItems, deletedData] = await Promise.all([
+    //     patchedDataResponse.ok && patchedDataResponse.json(),
+    //     deletedDataResponse.json(),
+    // ]);
 
-    const deletedItemKeys = deletedData.items;
+    // const deletedItemKeys = deletedData.items;
 
-    const deletePayload = deletedItemKeys.map((deletedItemKey) => ({
-        deleteOne: {
-            filter: { key: deletedItemKey },
-        },
-    }));
-    let patchPayload = [];
+    // const deletePayload = deletedItemKeys.map((deletedItemKey) => ({
+    //     deleteOne: {
+    //         filter: { key: deletedItemKey },
+    //     },
+    // }));
+    // let patchPayload = [];
 
-    if (patchedDataResponse.ok) {
-        const remappedPatches = remapZoteroData(patchedItems);
-        patchPayload = remappedPatches.map((remappedPatch) => ({
-            replaceOne: {
-                filter: { key: remappedPatch.key },
-                replacement: remappedPatch,
-                upsert: true,
-            },
-        }));
-    } else {
-        console.error(
-            `Zotero patch request returned with response: ${patchedDataResponse.status} ${patchedDataResponse.statusText}.`
-        );
-    }
+    // if (patchedDataResponse.ok) {
+    //     const remappedPatches = remapZoteroData(patchedItems);
+    //     patchPayload = remappedPatches.map((remappedPatch) => ({
+    //         replaceOne: {
+    //             filter: { key: remappedPatch.key },
+    //             replacement: remappedPatch,
+    //             upsert: true,
+    //         },
+    //     }));
+    // } else {
+    //     console.error(
+    //         `Zotero patch request returned with response: ${patchedDataResponse.status} ${patchedDataResponse.statusText}.`
+    //     );
+    // }
 
-    const bulkWritePayload = deletePayload.concat(patchPayload);
-    console.log(bulkWritePayload);
-    const bulkWriteResult =
-        bulkWritePayload.length &&
-        (await collection.bulkWrite(bulkWritePayload, {
-            ordered: false,
-        }));
-    console.log(bulkWriteResult);
+    // const bulkWritePayload = deletePayload.concat(patchPayload);
+    // console.log(bulkWritePayload);
+    // const bulkWriteResult =
+    //     bulkWritePayload.length &&
+    //     (await collection.bulkWrite(bulkWritePayload, {
+    //         ordered: false,
+    //     }));
+    // console.log(bulkWriteResult);
 
     // const eventBody = JSON.parse(event.body);
     // console.log(`Next function run at ${eventBody.next_run}.`);
     console.log(event.body);
+    console.log(currentDBVersion);
     return {
         statusCode: 200,
     };
