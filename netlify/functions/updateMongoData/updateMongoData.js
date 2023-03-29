@@ -16,7 +16,6 @@ export const handler = schedule("@hourly", async (event) => {
         .limit(1)
         .toArray();
     const currentDBVersion = newestItem[0].version;
-    console.log(currentDBVersion);
 
     const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
