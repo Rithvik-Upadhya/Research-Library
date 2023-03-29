@@ -7,7 +7,7 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI);
 
 const clientPromise = mongoClient.connect();
 
-export const handler = schedule("*/2 * * * *", async (event) => {
+export async function handler(event) {
     const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
     const collection = database.collection(process.env.MONGODB_COLLECTION);
     const newestItem = await collection
@@ -33,9 +33,7 @@ export const handler = schedule("*/2 * * * *", async (event) => {
         },
     });
 
-    await fetch("https://jsonplaceholder.typicode.com/todos")
-        .then((res) => res.json())
-        .then((data) => console.log(data));
+    console.log(patchedDataResponse);
 
     // const [patchedDataResponse, deletedDataResponse] = await Promise.all([
     //     fetch(patchedDataURL, {
@@ -94,4 +92,4 @@ export const handler = schedule("*/2 * * * *", async (event) => {
     return {
         statusCode: 200,
     };
-});
+}
