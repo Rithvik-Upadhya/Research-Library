@@ -18,8 +18,7 @@ export const handler = schedule("*/2 * * * *", async (event) => {
     const currentDBVersion = 80 || newestItem[0].version;
     console.log(currentDBVersion);
 
-    // const patchedDataURL = `https://api.zotero.org/groups/4433711/items?format=json&limit=100&v=3&since=${currentDBVersion}&format=json`;
-    const patchedDataURL = "https://jsonplaceholder.typicode.com/todos";
+    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?format=json&limit=100&v=3&since=${currentDBVersion}`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
 
     const patchedDataResponse = await fetch(patchedDataURL, {
@@ -28,13 +27,15 @@ export const handler = schedule("*/2 * * * *", async (event) => {
             "If-Modified-Since-Version": currentDBVersion,
         },
     });
-    const patchItems = await patchedDataURL.json();
-    console.log(patchItems);
     const deletedDataResponse = await fetch(deletedDataURL, {
         headers: {
             "Zotero-API-Key": process.env.ZOTERO_API_KEY,
         },
     });
+
+    await fetch("https://jsonplaceholder.typicode.com/todos")
+        .then((res) => res.json())
+        .then((data) => console.log(data));
 
     // const [patchedDataResponse, deletedDataResponse] = await Promise.all([
     //     fetch(patchedDataURL, {
