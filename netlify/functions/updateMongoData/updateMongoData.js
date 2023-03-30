@@ -16,7 +16,9 @@ export const handler = schedule("*/10 * * * *", async (event) => {
         .limit(1)
         .toArray();
     const currentDBVersion = newestItem[0].version;
-    console.log(currentDBVersion);
+
+    console.log(`Current MongoDB Version: ${currentDBVersion}`);
+
     const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}&itemType=-note`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
     const trashedDataURL = `https://api.zotero.org/groups/4433711/items/trash?limit=100&format=json&v=3&since=${currentDBVersion}`;
@@ -53,9 +55,9 @@ export const handler = schedule("*/10 * * * *", async (event) => {
     const deletedItemKeys = deletedJSON.items;
     const trashedItemKeys = trashedJSON.map((item) => item.key);
     const removedItemKeys = deletedItemKeys.concat(trashedItemKeys);
-    console.log(patchedData);
-    console.log(deletedItemKeys);
-    console.log(trashedItemKeys);
+    console.log("Patched Items:", patchedData);
+    console.log("Deleted Items:", deletedItemKeys);
+    console.log("Trashed Items:", trashedItemKeys);
 
     const deletePayload = removedItemKeys.map((removedItemKey) => ({
         deleteOne: {
@@ -102,21 +104,25 @@ export const handler = schedule("*/10 * * * *", async (event) => {
     }
 
     const bulkWriteItemsPayload = deletePayload.concat(patchItemsPayload);
-    console.log(bulkWriteItemsPayload);
+    console.log(
+        `Bulk write items payload: ${JSON.stringify(bulkWriteItemsPayload)}`
+    );
     const bulkWriteItemsResult = bulkWriteItemsPayload.length
         ? await collection.bulkWrite(bulkWriteItemsPayload, {
               ordered: false,
           })
         : "Data already up to date";
-    console.log(bulkWriteItemsResult);
+    console.log("Bulk write items result: ", bulkWriteItemsResult);
 
-    console.log(patchImagesPayload);
+    console.log(
+        `Bulk write items payload: ${JSON.stringify(patchImagesPayload)}`
+    );
     const bulkWriteImagesResult = patchImagesPayload.length
         ? await collection.bulkWrite(patchImagesPayload, {
               ordered: false,
           })
         : "Images already up to date";
-    console.log(bulkWriteImagesResult);
+    console.log("Bulk write images result: ", bulkWriteImagesResult);
 
     const eventBody = JSON.parse(event.body);
     console.log(`Next function run at ${eventBody.next_run}.`);
