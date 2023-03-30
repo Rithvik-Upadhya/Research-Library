@@ -6,8 +6,15 @@ import reactStringReplace from "react-string-replace";
 import createRegex from "../utils/createRegex";
 
 function Homepage() {
-    const [zoteroData, setZoteroData] = useState([]);
-    const [favourites, setFavourites] = useState([]);
+    const [zoteroData, setZoteroData] = useState(
+        localStorage.getItem("zoteroData") || []
+    );
+    const [favourites, setFavourites] = useState(
+        localStorage.getItem("favourites") || []
+    );
+    const [version, setVersion] = useState(
+        localStorage.getItem("version") || 0
+    );
     const [queries, setQueries] = useState(createQueryObj(zoteroData));
     const [matches, setMatches] = useState([]);
 
@@ -97,6 +104,47 @@ function Homepage() {
     }
 
     useEffect(() => {
+        const localDB = JSON.parse(localStorage.getItem("localDB"));
+        let remoteDB = {
+            version: version,
+            zoteroData: zoteroData,
+            favourites: favourites,
+        };
+        const fetchVersion = async () => {
+            const response = await fetch("/.netlify/functions/getMongoVersion");
+            const data = await response.json();
+            remoteDB = {
+                ...remoteDB,
+                version: data,
+            };
+            console.log(remoteDB.version);
+            if (localDB && localDB.version != remoteDB.version) {
+                fetchFavourites().catch((error) =>
+                    console.error(
+                        `Getting favourites from netlify failed with error: ${error}`
+                    )
+                );
+            }
+        };
+        fetchVersion().catch((error) =>
+            console.error(
+                `Getting version from netlify failed with error: ${error}`
+            )
+        );
+        const fetchData = async () => {
+            const response = await fetch("/.netlify/functions/getZoteroData");
+            const data = await response.json();
+            setZoteroData(data);
+            setQueries(createQueryObj(data));
+            matchQueries(data, createQueryObj(data));
+
+            remoteDB = {
+                ...remoteDB,
+                zoteroData: data,
+            };
+            console.log("remoteDB", remoteDB);
+            localStorage.setItem("localDB", JSON.stringify(remoteDB));
+        };
         const fetchFavourites = async () => {
             const response = await fetch(
                 "/.netlify/functions/getZoteroFavourites"
@@ -106,26 +154,35 @@ function Homepage() {
             setZoteroData(data);
             setQueries(createQueryObj(data));
             matchQueries(data, createQueryObj(data));
-            console.log(data);
+
+            remoteDB = {
+                ...remoteDB,
+                favourites: data,
+            };
             fetchData().catch((error) =>
                 console.error(
                     `Getting data from netlify failed with error: ${error}`
                 )
             );
         };
-        const fetchData = async () => {
-            const response = await fetch("/.netlify/functions/getZoteroData");
-            const data = await response.json();
-            setZoteroData(data);
-            setQueries(createQueryObj(data));
-            matchQueries(data, createQueryObj(data));
-            console.log(data);
-        };
-        fetchFavourites().catch((error) =>
-            console.error(
-                `Getting data from netlify failed with error: ${error}`
-            )
-        );
+
+        if (localDB) {
+            setZoteroData(localDB.zoteroData);
+            setFavourites(localDB.favourites);
+            setVersion(localDB.version);
+            setQueries(createQueryObj(localDB.zoteroData));
+            matchQueries(
+                localDB.zoteroData,
+                createQueryObj(localDB.zoteroData)
+            );
+            console.log("localDB", localDB);
+        } else {
+            fetchFavourites().catch((error) =>
+                console.error(
+                    `Getting favourites from netlify failed with error: ${error}`
+                )
+            );
+        }
     }, []);
 
     const doSearch =
