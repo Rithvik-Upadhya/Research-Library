@@ -97,20 +97,33 @@ function Homepage() {
     }
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch("/.netlify/functions/getZoteroData");
+        const fetchFavourites = async () => {
+            const response = await fetch(
+                "/.netlify/functions/getZoteroFavourites"
+            );
             const data = await response.json();
-            const favouriteData = data.filter((item) => item.favourite);
-            console.log(data);
-            console.log(favouriteData);
-            setFavourites(favouriteData);
+            setFavourites(data);
             setZoteroData(data);
             setQueries(createQueryObj(data));
             matchQueries(data, createQueryObj(data));
+            console.log(data);
+            fetchData().catch((error) =>
+                console.error(
+                    `Getting data from netlify failed with error: ${error}`
+                )
+            );
         };
-        fetchData().catch((error) =>
+        const fetchData = async () => {
+            const response = await fetch("/.netlify/functions/getZoteroData");
+            const data = await response.json();
+            setZoteroData(data);
+            setQueries(createQueryObj(data));
+            matchQueries(data, createQueryObj(data));
+            console.log(data);
+        };
+        fetchFavourites().catch((error) =>
             console.error(
-                `Getting data from server failed with error: ${error}`
+                `Getting data from netlify failed with error: ${error}`
             )
         );
     }, []);
@@ -126,13 +139,10 @@ function Homepage() {
         return <Resource {...resource} id={resource.key} />;
     });
 
-    // optional: add to make checked items appear on top
-    // .sort((a, b) => (a.checked === b.checked ? 0 : a.checked ? -1 : 1))
-
-    function createCheckboxes(queries, categoryName) {
+    function createCheckboxes(querySet, categoryName) {
         // optional: add to make checked items appear on top
         // .sort((a, b) => (a.checked === b.checked ? 0 : a.checked ? -1 : 1))
-        return queries[categoryName].map((categoryItem, i) => {
+        return querySet[categoryName].map((categoryItem, i) => {
             return (
                 <div className="checkbox" key={i}>
                     <input
@@ -144,46 +154,16 @@ function Homepage() {
                         onChange={handleQueries}
                     />
                     <label htmlFor={`${categoryName}_${i}`}>
-                        {categoryName.value}
+                        {categoryItem.value}
                     </label>
                 </div>
             );
         });
     }
-    const itemTypeEls = createCheckboxes(queries, "itemType");
 
-    // queries.itemTypes.map((itemType, i) => {
-    //     return (
-    //         <div className="checkbox" key={i}>
-    //             <input
-    //                 type="checkbox"
-    //                 id={`itemType_${i}`}
-    //                 value={itemType.value}
-    //                 name="itemTypes"
-    //                 checked={queries.itemTypes[i].checked}
-    //                 onChange={handleQueries}
-    //             />
-    //             <label htmlFor={`itemType_${i}`}>{itemType.value}</label>
-    //         </div>
-    //     );
-    // });
+    const itemTypeEls = createCheckboxes(queries, "itemTypes");
+
     const tagEls = createCheckboxes(queries, "tags");
-
-    // queries.tags.map((tag, i) => {
-    //     return (
-    //         <div className="checkbox" key={i}>
-    //             <input
-    //                 type="checkbox"
-    //                 id={`tag_${i}`}
-    //                 value={tag.value}
-    //                 name="tags"
-    //                 checked={queries.tags[i].checked}
-    //                 onChange={handleQueries}
-    //             />
-    //             <label htmlFor={`tag_${i}`}>{tag.value}</label>
-    //         </div>
-    //     );
-    // });
 
     return (
         <>

@@ -67,13 +67,11 @@ export default function Resource(props) {
                 {info}
             </span>
         ));
-    const tagEls = props.tags.map((tag, i) =>
-        tag != "Favourite" ? (
-            <span className="tag" key={i}>
-                {tag}
-            </span>
-        ) : null
-    );
+    const tagEls = props.tags.map((tag, i) => (
+        <span className="tag" key={i}>
+            {tag}
+        </span>
+    ));
     const authorEls = props.authors.map((author, i, authors) => (
         <span className="author" key={i}>
             {author}
