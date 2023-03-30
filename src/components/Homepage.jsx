@@ -17,6 +17,7 @@ function Homepage() {
     );
     const [queries, setQueries] = useState(createQueryObj(zoteroData));
     const [matches, setMatches] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     function handleQueries(event) {
         const { name, value, type, checked } = event.target;
@@ -117,13 +118,13 @@ function Homepage() {
                 ...remoteDB,
                 version: data,
             };
-            console.log(remoteDB.version);
             if (localDB && localDB.version != remoteDB.version) {
-                fetchFavourites().catch((error) =>
+                fetchFavourites().catch((error) => {
+                    setLoading("networkError");
                     console.error(
                         `Getting favourites from netlify failed with error: ${error}`
-                    )
-                );
+                    );
+                });
             }
         };
         fetchVersion().catch((error) =>
@@ -153,6 +154,7 @@ function Homepage() {
             setFavourites(data);
             setZoteroData(data);
             setQueries(createQueryObj(data));
+            setLoading(false);
             matchQueries(data, createQueryObj(data));
 
             remoteDB = {
@@ -171,17 +173,19 @@ function Homepage() {
             setFavourites(localDB.favourites);
             setVersion(localDB.version);
             setQueries(createQueryObj(localDB.zoteroData));
+            setLoading(false);
             matchQueries(
                 localDB.zoteroData,
                 createQueryObj(localDB.zoteroData)
             );
             console.log("localDB", localDB);
         } else {
-            fetchFavourites().catch((error) =>
+            fetchFavourites().catch((error) => {
+                setLoading("networkError");
                 console.error(
                     `Getting favourites from netlify failed with error: ${error}`
-                )
-            );
+                );
+            });
         }
     }, []);
 
@@ -278,10 +282,15 @@ function Homepage() {
             </section>
             <section id="resources">
                 <div className="container">
-                    {zoteroData.length === 0 ? (
+                    {loading === true ? (
                         <div className="loading">Loading</div>
-                    ) : (
+                    ) : loading === false ? (
                         <div id="resources">{resourceEls}</div>
+                    ) : (
+                        <div className="loading">
+                            Oops! Something went wrong. <br />
+                            Please reload or try again later.
+                        </div>
                     )}
                 </div>
             </section>
