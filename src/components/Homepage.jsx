@@ -161,11 +161,12 @@ function Homepage() {
                 ...remoteDB,
                 favourites: data,
             };
-            fetchData().catch((error) =>
+            fetchData().catch((error) => {
+                setLoading("networkError");
                 console.error(
                     `Getting data from netlify failed with error: ${error}`
-                )
-            );
+                );
+            });
         };
 
         if (localDB) {
