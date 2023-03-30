@@ -82,9 +82,21 @@ export default function Resource(props) {
         const modal = document.getElementById(`modal_${key}`);
         modal.showModal();
     }
-    function modalClose(key) {
+    function modalBtnClose(key) {
         const modal = document.getElementById(`modal_${key}`);
         modal.close();
+    }
+    function modalBackdropClose(event, key) {
+        const modal = document.getElementById(`modal_${key}`);
+        var rect = modal.getBoundingClientRect();
+        var isInDialog =
+            rect.top <= event.clientY &&
+            event.clientY <= rect.top + rect.height &&
+            rect.left <= event.clientX &&
+            event.clientX <= rect.left + rect.width;
+        if (!isInDialog) {
+            modal.close();
+        }
     }
     return (
         <div className="resource" id={props.id}>
@@ -108,7 +120,11 @@ export default function Resource(props) {
                             : props.title}
                     </p>
                 )}
-                <dialog className="modal info" id={`modal_${props.id}`}>
+                <dialog
+                    className="modal info"
+                    id={`modal_${props.id}`}
+                    onClick={(event) => modalBackdropClose(event, props.id)}
+                >
                     <p className="flag">
                         {props.itemType}
                         {props.year ? " | " : ""}
@@ -130,8 +146,8 @@ export default function Resource(props) {
                     <div className="buttons">
                         <div className="button">
                             <button
-                                className="modalClose"
-                                onClick={() => modalClose(props.id)}
+                                className="modalBtnClose"
+                                onClick={() => modalBtnClose(props.id)}
                             >
                                 Close
                             </button>

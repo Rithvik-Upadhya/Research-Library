@@ -3,48 +3,40 @@ Sticky Header
 ===========================*/
 
 const MyStickyHeader = true,
-    header = document.querySelector('header'),
-    doc = document.querySelector(':root'),
+    header = document.querySelector("header"),
+    doc = document.querySelector(":root"),
     headerHeight = header.offsetHeight;
 
 let lastScrollTop = 0;
 
-doc.style.setProperty('--headerH', headerHeight + 'px');
+doc.style.setProperty("--headerH", headerHeight + "px");
 
 if (MyStickyHeader) {
-    
-    header.style.setProperty('position', 'fixed');
+    header.style.setProperty("position", "fixed");
 }
 
 if (MyStickyHeader) {
-
-    window.addEventListener('scroll', function() {
-
+    window.addEventListener("scroll", function () {
         scrollTop = window.pageYOffset;
 
         if (scrollTop > 0) {
-            header.classList.add('scroll');
+            header.classList.add("scroll");
         } else {
-            header.classList.remove('scroll');
+            header.classList.remove("scroll");
         }
 
         if (scrollTop > 300) {
-            header.classList.add('check');
+            header.classList.add("check");
         } else {
-            header.classList.remove('check');
+            header.classList.remove("check");
         }
 
         if (scrollTop > 300 && scrollTop > lastScrollTop) {
-            header.classList.add('exit');
+            header.classList.add("exit");
         } else {
-            header.classList.remove('exit');
+            header.classList.remove("exit");
         }
 
-        lastScrollTop = scrollTop
+        lastScrollTop = scrollTop;
     });
 }
-
-/*==========================
-Dark Mode
-===========================*/
-

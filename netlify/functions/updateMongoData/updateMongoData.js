@@ -7,7 +7,7 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI);
 
 const clientPromise = mongoClient.connect();
 
-export const handler = schedule("@hourly", async (event) => {
+export const handler = schedule("*/10 * * * *", async (event) => {
     const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
     const collection = database.collection(process.env.MONGODB_COLLECTION);
     const newestItem = await collection
@@ -48,7 +48,7 @@ export const handler = schedule("@hourly", async (event) => {
     ]);
 
     const patchedData = patchedJSON
-        ? patchedData.map((patch) => patch.data)
+        ? patchedJSON.map((patch) => patch.data)
         : [];
     const deletedItemKeys = deletedJSON.items;
     const trashedItemKeys = trashedJSON.map((item) => item.key);
@@ -73,7 +73,7 @@ export const handler = schedule("@hourly", async (event) => {
         );
         const patchedImages = splitPatches.images.map((image) => ({
             key: image.parentItem,
-            image: cloudinaryImageOptions(image.url),
+            image: image.url,
             alt: image.title,
         }));
         const patchedItems = splitPatches.items.map((item) => ({
