@@ -1,5 +1,6 @@
 import React from "react";
 import "./Resource.css";
+import cloudinarifyImage from "../utils/cloudinarifyImage";
 
 export default function Resource(props) {
     const publicationInfo = [
@@ -66,13 +67,11 @@ export default function Resource(props) {
                 {info}
             </span>
         ));
-    const tagEls = props.tags.map((tag, i) =>
-        tag != "Favourite" ? (
-            <span className="tag" key={i}>
-                {tag}
-            </span>
-        ) : null
-    );
+    const tagEls = props.tags.map((tag, i) => (
+        <span className="tag" key={i}>
+            {tag}
+        </span>
+    ));
     const authorEls = props.authors.map((author, i, authors) => (
         <span className="author" key={i}>
             {author}
@@ -89,73 +88,84 @@ export default function Resource(props) {
     }
     return (
         <div className="resource" id={props.id}>
-            <p className="flag">
-                {props.itemType}
-                {props.year ? " | " : ""}
-                {props.year ? props.year : ""}
-            </p>
-            {props.title && (
-                <p className="title">
-                    {props.title.length > 150
-                        ? `${props.title.substring(0, 150)}...`
-                        : props.title}
-                </p>
+            {props.image && (
+                <img
+                    className="resource-image"
+                    src={cloudinarifyImage(props.image, "c_fill,w_500,h_500")}
+                    alt={props.alt}
+                />
             )}
-            <dialog className="modal info" id={`modal_${props.id}`}>
+            <div className="resource-info">
                 <p className="flag">
                     {props.itemType}
                     {props.year ? " | " : ""}
                     {props.year ? props.year : ""}
                 </p>
-                <p className="title">{props.title}</p>
-                <p className="publication">{publicationInfo}</p>
+                {props.title && (
+                    <p className="title">
+                        {props.title.length > 150
+                            ? `${props.title.substring(0, 150)}...`
+                            : props.title}
+                    </p>
+                )}
+                <dialog className="modal info" id={`modal_${props.id}`}>
+                    <p className="flag">
+                        {props.itemType}
+                        {props.year ? " | " : ""}
+                        {props.year ? props.year : ""}
+                    </p>
+                    <p className="title">{props.title}</p>
+                    <p className="publication">{publicationInfo}</p>
+                    {props.authors.length > 0 && (
+                        <p className="authors">
+                            {props.authors.length > 1
+                                ? "Authors: "
+                                : "Author: "}
+                            {authorEls}
+                        </p>
+                    )}
+                    {props.abstractNote && (
+                        <p className="abstract">{props.abstractNote}</p>
+                    )}
+                    <div className="buttons">
+                        <div className="button">
+                            <button
+                                className="modalClose"
+                                onClick={() => modalClose(props.id)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                        {props.url && (
+                            <div className="button">
+                                <a href={props.url} target="_blank">
+                                    Access
+                                </a>
+                            </div>
+                        )}
+                    </div>
+                </dialog>
                 {props.authors.length > 0 && (
                     <p className="authors">
                         {props.authors.length > 1 ? "Authors: " : "Author: "}
                         {authorEls}
                     </p>
                 )}
-                {props.abstractNote && (
-                    <p className="abstract">{props.abstractNote}</p>
+                {props.abstractNote && !props.image && (
+                    <p className="abstract">
+                        {props.abstractNote.length > 200
+                            ? `${props.abstractNote.substring(0, 200)}...`
+                            : props.abstractNote}
+                    </p>
                 )}
-                <div className="buttons">
-                    <div className="button">
-                        <button
-                            className="modalClose"
-                            onClick={() => modalClose(props.id)}
-                        >
-                            Close
-                        </button>
-                    </div>
-                    {props.url && (
-                        <div className="button">
-                            <a href={props.url} target="_blank">
-                                Access
-                            </a>
-                        </div>
-                    )}
-                </div>
-            </dialog>
-            {props.authors.length > 0 && (
-                <p className="authors">
-                    {props.authors.length > 1 ? "Authors: " : "Author: "}
-                    {authorEls}
-                </p>
-            )}
-            {props.abstractNote && (
-                <p className="abstract">
-                    {props.abstractNote.length > 200
-                        ? `${props.abstractNote.substring(0, 200)}...`
-                        : props.abstractNote}
-                </p>
-            )}
-            <button
-                className="modalTrigger readMore"
-                onClick={() => modalTrigger(props.id)}
-            >
-                <span className="buttonText">Read More</span>
-            </button>
-            {tagEls.length > 0 && <div className="tags">{tagEls}</div>}
+                <button
+                    className="modalTrigger readMore"
+                    onClick={() => modalTrigger(props.id)}
+                >
+                    <span className="buttonText">Read More</span>
+                </button>
+                {tagEls.length > 0 && <div className="tags">{tagEls}</div>}
+            </div>
         </div>
     );
 }

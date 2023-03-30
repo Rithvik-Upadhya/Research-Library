@@ -9,7 +9,7 @@ export async function handler(event) {
         const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
         const collection = database.collection(process.env.MONGODB_COLLECTION);
         const results = await collection
-            .find({})
+            .find({ favourite: true })
             .sort({ dateAdded: -1 })
             .toArray();
 

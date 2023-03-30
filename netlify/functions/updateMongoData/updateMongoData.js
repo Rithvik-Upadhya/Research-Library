@@ -17,38 +17,71 @@ export const handler = schedule("@hourly", async (event) => {
         .toArray();
     const currentDBVersion = newestItem[0].version;
 
-    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}`;
+    const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}&itemType=-note`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
+    const trashedDataURL = `https://api.zotero.org/groups/4433711/items/trash?limit=100&format=json&v=3&since=${currentDBVersion}`;
 
-    const [patchedDataResponse, deletedDataResponse] = await Promise.all([
-        fetch(patchedDataURL, {
-            headers: {
-                "Zotero-API-Key": process.env.ZOTERO_API_KEY,
-                "If-Modified-Since-Version": currentDBVersion,
-            },
-        }),
-        fetch(deletedDataURL, {
-            headers: {
-                "Zotero-API-Key": process.env.ZOTERO_API_KEY,
-            },
-        }),
-    ]);
+    const [patchedDataResponse, deletedDataResponse, trashedDataResponse] =
+        await Promise.all([
+            fetch(patchedDataURL, {
+                headers: {
+                    "Zotero-API-Key": process.env.ZOTERO_API_KEY,
+                    "If-Modified-Since-Version": currentDBVersion,
+                },
+            }),
+            fetch(deletedDataURL, {
+                headers: {
+                    "Zotero-API-Key": process.env.ZOTERO_API_KEY,
+                },
+            }),
+            fetch(trashedDataURL, {
+                headers: {
+                    "Zotero-API-Key": process.env.ZOTERO_API_KEY,
+                },
+            }),
+        ]);
 
-    const [patchedItems, deletedData] = await Promise.all([
+    const [patchedJSON, deletedJSON, trashedJSON] = await Promise.all([
         patchedDataResponse.ok && patchedDataResponse.json(),
         deletedDataResponse.json(),
+        trashedDataResponse.json(),
     ]);
 
-    const deletedItemKeys = deletedData.items;
+    const patchedData = patchedJSON
+        ? patchedData.map((patch) => patch.data)
+        : [];
+    const deletedItemKeys = deletedJSON.items;
+    const trashedItemKeys = trashedJSON.map((item) => item.key);
+    const removedItemKeys = deletedItemKeys.concat(trashedItemKeys);
 
-    const deletePayload = deletedItemKeys.map((deletedItemKey) => ({
+    const deletePayload = removedItemKeys.map((removedItemKey) => ({
         deleteOne: {
-            filter: { key: deletedItemKey },
+            filter: { key: removedItemKey },
         },
     }));
     let patchPayload = [];
 
     if (patchedDataResponse.ok) {
+        const splitPatches = patchedData.reduce(
+            (result, currentItem) => {
+                result[
+                    currentItem.itemType === "attachment" ? "images" : "items"
+                ].push(currentItem);
+                return result;
+            },
+            { items: [], images: [] }
+        );
+        const patchedImages = splitPatches.images.map((image) => ({
+            key: image.parentItem,
+            image: cloudinaryImageOptions(image.url),
+            alt: image.title,
+        }));
+        const patchedItems = splitPatches.items.map((item) => ({
+            ...item,
+            image: "",
+            alt: "",
+            ...patchedImages.find((image) => image.key === item.key),
+        }));
         const remappedPatches = remapZoteroData(patchedItems);
         patchPayload = remappedPatches.map((remappedPatch) => ({
             replaceOne: {

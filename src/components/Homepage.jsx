@@ -1,142 +1,15 @@
 import { useState, useEffect } from "react";
 import "./Homepage.css";
 import Resource from "./Resource";
+import createQueryObj from "../utils/createQueryObj";
 import reactStringReplace from "react-string-replace";
+import createRegex from "../utils/createRegex";
 
 function Homepage() {
     const [zoteroData, setZoteroData] = useState([]);
     const [favourites, setFavourites] = useState([]);
-    const [images, setImages] = useState([]);
-    function checkboxObjects(prop, inputData) {
-        const uniqueValues = [
-            ...new Set(
-                inputData.reduce((propsArray, resource) => {
-                    return propsArray.concat(resource[prop]);
-                }, [])
-            ),
-        ].sort();
-        const checkboxObjects = uniqueValues.map((uniqueValue) => ({
-            value: uniqueValue,
-            checked: false,
-        }));
-        return checkboxObjects;
-    }
-    function queriesTemplate(inputData) {
-        return {
-            searchTerm: "",
-            itemTypes: checkboxObjects("itemType", inputData),
-            tags: checkboxObjects("tags", inputData),
-        };
-    }
-    const [queries, setQueries] = useState(queriesTemplate(zoteroData));
+    const [queries, setQueries] = useState(createQueryObj(zoteroData));
     const [matches, setMatches] = useState([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch("/.netlify/functions/getZoteroData");
-            const data = await response.json();
-            data.sort(
-                (a, b) => Date.parse(b.dateAdded) - Date.parse(a.dateAdded)
-            );
-            const filteredData = data.reduce(
-                (result, currentItem) => {
-                    result[
-                        currentItem.itemType === "Attachment"
-                            ? "images"
-                            : "items"
-                    ].push(currentItem);
-                    return result;
-                },
-                { items: [], images: [] }
-            );
-            const favouriteData = filteredData.items.filter(
-                (item) => item.favourite
-            );
-            console.log(filteredData.items);
-            console.log(favouriteData);
-            console.log(filteredData.images);
-            setFavourites(favouriteData);
-            setZoteroData(filteredData.items);
-            setImages(filteredData.images);
-            setQueries(queriesTemplate(data));
-            matchQueries(data, queriesTemplate(data));
-        };
-        fetchData().catch((error) =>
-            console.error(
-                `Getting data from server failed with error: ${error}`
-            )
-        );
-    }, []);
-
-    function createRegex(searchTerm) {
-        const protoSearch = searchTerm
-            .replace(/[,\s/.]+/g, " ")
-            .trim()
-            .replace(/\s+/g, "|")
-            .replace(/\|.{1,2}(?=\||$)/g, "");
-        return new RegExp(`(${protoSearch})`, "gi");
-    }
-
-    function matchQueries(dataSet, queriesSet) {
-        const regexSearch = createRegex(queriesSet.searchTerm);
-        function search({ title, itemType, year, tags, authors }) {
-            const searchable = [
-                tags.join(" "),
-                title,
-                itemType,
-                year,
-                authors.join(" "),
-            ].join(" ");
-            return queriesSet.searchTerm.length > 2
-                ? searchable && searchable.match(regexSearch)
-                : true;
-        }
-        function highlight(input) {
-            return reactStringReplace(input, regexSearch, (match, i) => (
-                <span key={i} className="hl">
-                    {match}
-                </span>
-            ));
-        }
-        function checkItemType(currentItemType) {
-            return queriesSet.itemTypes.some((itemType) => itemType.checked)
-                ? queriesSet.itemTypes
-                      .filter((itemType) => itemType.checked)
-                      .map((itemType) => itemType.value)
-                      .includes(currentItemType)
-                : true;
-        }
-        function checkTags(currentTags) {
-            const queriedTags = queriesSet.tags
-                .filter((tag) => tag.checked)
-                .map((tag) => tag.value);
-            const checkTags = currentTags.some(
-                (currentTag) => queriedTags.indexOf(currentTag) >= 0
-            );
-            return queriedTags.length > 0 ? checkTags : true;
-        }
-        const filtered = dataSet.filter((resource) => {
-            return (
-                search(resource) &&
-                checkItemType(resource.itemType) &&
-                checkTags(resource.tags)
-            );
-        });
-        const sorted = filtered.sort(
-            (a, b) => search(b).length - search(a).length
-        );
-        const markedSet = sorted.map((match) => ({
-            ...match,
-            title: highlight(match.title),
-            itemType: highlight(match.itemType),
-            year: match.year ? highlight(match.year.toString()) : undefined,
-            tags: match.tags.map((tag) => highlight(tag)),
-            authors: match.authors.map((author) => highlight(author)),
-        }));
-        queriesSet.searchTerm.length > 2
-            ? setMatches(markedSet)
-            : setMatches(filtered);
-    }
 
     function handleQueries(event) {
         const { name, value, type, checked } = event.target;
@@ -153,51 +26,144 @@ function Homepage() {
         setQueries(newQueries);
         matchQueries(zoteroData, newQueries);
     }
-    const resources =
+
+    function matchQueries(dataSet, queryObj) {
+        const regexSearch = createRegex(queryObj.searchTerm);
+
+        function highlight(input) {
+            return reactStringReplace(input, regexSearch, (match, i) => (
+                <span key={i} className="hl">
+                    {match}
+                </span>
+            ));
+        }
+
+        function search({ title, itemType, year, tags, authors }) {
+            const searchable = [
+                tags.join(" "),
+                title,
+                itemType,
+                year,
+                authors.join(" "),
+            ].join(" ");
+            return queryObj.searchTerm.length > 2
+                ? searchable && searchable.match(regexSearch)
+                : true;
+        }
+
+        function checkItemType(currentItemType) {
+            return queryObj.itemTypes.some((itemType) => itemType.checked)
+                ? queryObj.itemTypes
+                      .filter((itemType) => itemType.checked)
+                      .map((itemType) => itemType.value)
+                      .includes(currentItemType)
+                : true;
+        }
+
+        function checkItemTags(currentItemTags) {
+            const queriedTags = queryObj.tags
+                .filter((tag) => tag.checked)
+                .map((tag) => tag.value);
+            const checkTags = currentItemTags.some(
+                (currentItemTag) => queriedTags.indexOf(currentItemTag) >= 0
+            );
+            return queriedTags.length > 0 ? checkTags : true;
+        }
+
+        const filtered = dataSet.filter((resource) => {
+            return (
+                search(resource, queryObj) &&
+                checkItemType(resource.itemType, queryObj) &&
+                checkItemTags(resource.tags, queryObj)
+            );
+        });
+
+        const sorted = filtered.sort(
+            (a, b) => search(b).length - search(a).length
+        );
+
+        const marked = sorted.map((match) => ({
+            ...match,
+            title: highlight(match.title),
+            itemType: highlight(match.itemType),
+            year: match.year ? highlight(match.year.toString()) : undefined,
+            tags: match.tags.map((tag) => highlight(tag)),
+            authors: match.authors.map((author) => highlight(author)),
+        }));
+
+        queryObj.searchTerm.length > 2
+            ? setMatches(marked)
+            : setMatches(filtered);
+    }
+
+    useEffect(() => {
+        const fetchFavourites = async () => {
+            const response = await fetch(
+                "/.netlify/functions/getZoteroFavourites"
+            );
+            const data = await response.json();
+            setFavourites(data);
+            setZoteroData(data);
+            setQueries(createQueryObj(data));
+            matchQueries(data, createQueryObj(data));
+            console.log(data);
+            fetchData().catch((error) =>
+                console.error(
+                    `Getting data from netlify failed with error: ${error}`
+                )
+            );
+        };
+        const fetchData = async () => {
+            const response = await fetch("/.netlify/functions/getZoteroData");
+            const data = await response.json();
+            setZoteroData(data);
+            setQueries(createQueryObj(data));
+            matchQueries(data, createQueryObj(data));
+            console.log(data);
+        };
+        fetchFavourites().catch((error) =>
+            console.error(
+                `Getting data from netlify failed with error: ${error}`
+            )
+        );
+    }, []);
+
+    const doSearch =
         queries.searchTerm.length > 2 ||
         queries.itemTypes.some((itemType) => itemType.checked) ||
-        queries.tags.some((tag) => tag.checked)
-            ? matches
-            : favourites;
+        queries.tags.some((tag) => tag.checked);
+
+    const resources = doSearch ? matches : favourites;
+    const resourceCount = doSearch ? matches.length : zoteroData.length;
     const resourceEls = resources.map((resource) => {
         return <Resource {...resource} id={resource.key} />;
     });
 
-    // optional: add to make checked items appear on top
-    // .sort((a, b) => (a.checked === b.checked ? 0 : a.checked ? -1 : 1))
-    const itemTypeEls = queries.itemTypes.map((itemType, i) => {
-        return (
-            <div className="checkbox" key={i}>
-                <input
-                    type="checkbox"
-                    id={`itemType_${i}`}
-                    value={itemType.value}
-                    name="itemTypes"
-                    checked={queries.itemTypes[i].checked}
-                    onChange={handleQueries}
-                />
-                <label htmlFor={`itemType_${i}`}>{itemType.value}</label>
-            </div>
-        );
-    });
+    function createCheckboxes(querySet, categoryName) {
+        // optional: add to make checked items appear on top
+        // .sort((a, b) => (a.checked === b.checked ? 0 : a.checked ? -1 : 1))
+        return querySet[categoryName].map((categoryItem, i) => {
+            return (
+                <div className="checkbox" key={i}>
+                    <input
+                        type="checkbox"
+                        id={`${categoryName}_${i}`}
+                        value={categoryItem.value}
+                        name={categoryName}
+                        checked={categoryItem.checked}
+                        onChange={handleQueries}
+                    />
+                    <label htmlFor={`${categoryName}_${i}`}>
+                        {categoryItem.value}
+                    </label>
+                </div>
+            );
+        });
+    }
 
-    // optional: add to make checked items appear on top
-    // .sort((a, b) => (a.checked === b.checked ? 0 : a.checked ? -1 : 1))
-    const tagEls = queries.tags.map((tag, i) => {
-        return (
-            <div className="checkbox" key={i}>
-                <input
-                    type="checkbox"
-                    id={`tag_${i}`}
-                    value={tag.value}
-                    name="tags"
-                    checked={queries.tags[i].checked}
-                    onChange={handleQueries}
-                />
-                <label htmlFor={`tag_${i}`}>{tag.value}</label>
-            </div>
-        );
-    });
+    const itemTypeEls = createCheckboxes(queries, "itemTypes");
+
+    const tagEls = createCheckboxes(queries, "tags");
 
     return (
         <>
@@ -240,10 +206,12 @@ function Homepage() {
                                         </div>
                                     </div>
                                     <p id="queryCount">
-                                        {resources.length}{" "}
-                                        {resources.length === 1
-                                            ? "result"
-                                            : "results"}
+                                        {`${resourceCount} ${
+                                            resourceCount === 1
+                                                ? "result"
+                                                : "results"
+                                        }`}
+                                        {}
                                     </p>
                                 </div>
                             </div>
