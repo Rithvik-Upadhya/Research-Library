@@ -16,7 +16,7 @@ export const handler = schedule("*/10 * * * *", async (event) => {
         .limit(1)
         .toArray();
     const currentDBVersion = newestItem[0].version;
-
+    console.log(currentDBVersion);
     const patchedDataURL = `https://api.zotero.org/groups/4433711/items?limit=100&format=json&v=3&since=${currentDBVersion}&itemType=-note`;
     const deletedDataURL = `https://api.zotero.org/groups/4433711/deleted?since=${currentDBVersion}`;
     const trashedDataURL = `https://api.zotero.org/groups/4433711/items/trash?limit=100&format=json&v=3&since=${currentDBVersion}`;
@@ -53,13 +53,17 @@ export const handler = schedule("*/10 * * * *", async (event) => {
     const deletedItemKeys = deletedJSON.items;
     const trashedItemKeys = trashedJSON.map((item) => item.key);
     const removedItemKeys = deletedItemKeys.concat(trashedItemKeys);
+    console.log(patchedData);
+    console.log(deletedItemKeys);
+    console.log(trashedItemKeys);
 
     const deletePayload = removedItemKeys.map((removedItemKey) => ({
         deleteOne: {
             filter: { key: removedItemKey },
         },
     }));
-    let patchPayload = [];
+    let patchItemsPayload = [];
+    let patchImagesPayload = [];
 
     if (patchedDataResponse.ok) {
         const splitPatches = patchedData.reduce(
@@ -71,23 +75,24 @@ export const handler = schedule("*/10 * * * *", async (event) => {
             },
             { items: [], images: [] }
         );
-        const patchedImages = splitPatches.images.map((image) => ({
-            key: image.parentItem,
-            image: image.url,
-            alt: image.title,
-        }));
-        const patchedItems = splitPatches.items.map((item) => ({
-            ...item,
-            image: "",
-            alt: "",
-            ...patchedImages.find((image) => image.key === item.key),
-        }));
-        const remappedPatches = remapZoteroData(patchedItems);
-        patchPayload = remappedPatches.map((remappedPatch) => ({
+        const remappedPatches = remapZoteroData(splitPatches.items);
+        patchItemsPayload = remappedPatches.map((remappedPatch) => ({
             replaceOne: {
                 filter: { key: remappedPatch.key },
                 replacement: remappedPatch,
                 upsert: true,
+            },
+        }));
+        patchImagesPayload = splitPatches.images.map((image) => ({
+            updateOne: {
+                filter: { key: image.parentItem },
+                update: {
+                    $set: {
+                        image: image.url,
+                        alt: image.title,
+                        version: image.version,
+                    },
+                },
             },
         }));
     } else {
@@ -96,14 +101,22 @@ export const handler = schedule("*/10 * * * *", async (event) => {
         );
     }
 
-    const bulkWritePayload = deletePayload.concat(patchPayload);
-    console.log(bulkWritePayload);
-    const bulkWriteResult = bulkWritePayload.length
-        ? await collection.bulkWrite(bulkWritePayload, {
+    const bulkWriteItemsPayload = deletePayload.concat(patchItemsPayload);
+    console.log(bulkWriteItemsPayload);
+    const bulkWriteItemsResult = bulkWriteItemsPayload.length
+        ? await collection.bulkWrite(bulkWriteItemsPayload, {
               ordered: false,
           })
         : "Data already up to date";
-    console.log(bulkWriteResult);
+    console.log(bulkWriteItemsResult);
+
+    console.log(patchImagesPayload);
+    const bulkWriteImagesResult = patchImagesPayload.length
+        ? await collection.bulkWrite(patchImagesPayload, {
+              ordered: false,
+          })
+        : "Images already up to date";
+    console.log(bulkWriteImagesResult);
 
     const eventBody = JSON.parse(event.body);
     console.log(`Next function run at ${eventBody.next_run}.`);
