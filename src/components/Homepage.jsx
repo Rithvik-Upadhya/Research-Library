@@ -6,15 +6,13 @@ import reactStringReplace from "react-string-replace";
 import createRegex from "../utils/createRegex";
 
 function Homepage() {
-    const [zoteroData, setZoteroData] = useState(
-        localStorage.getItem("zoteroData") || []
-    );
-    const [favourites, setFavourites] = useState(
-        localStorage.getItem("favourites") || []
-    );
-    const [version, setVersion] = useState(
-        localStorage.getItem("version") || 0
-    );
+    const localDB = JSON.parse(localStorage.getItem("localDB"));
+    if (!localDB) {
+        localStorage.clear();
+    }
+    const [zoteroData, setZoteroData] = useState(localDB.zoteroData || []);
+    const [favourites, setFavourites] = useState(localDB.favourites || []);
+    const [version, setVersion] = useState(localDB.version || 0);
     const [queries, setQueries] = useState(createQueryObj(zoteroData));
     const [matches, setMatches] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -105,7 +103,6 @@ function Homepage() {
     }
 
     useEffect(() => {
-        const localDB = JSON.parse(localStorage.getItem("localDB"));
         let remoteDB = {
             version: version,
             zoteroData: zoteroData,
