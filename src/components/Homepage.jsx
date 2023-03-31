@@ -6,6 +6,10 @@ import reactStringReplace from "react-string-replace";
 import createRegex from "../utils/createRegex";
 
 function Homepage() {
+    const localDB = JSON.parse(localStorage.getItem("localDB"));
+    if (!localDB) {
+        localStorage.clear();
+    }
     const [zoteroData, setZoteroData] = useState(
         localStorage.getItem("zoteroData") || []
     );
@@ -105,7 +109,6 @@ function Homepage() {
     }
 
     useEffect(() => {
-        const localDB = JSON.parse(localStorage.getItem("localDB"));
         let remoteDB = {
             version: version,
             zoteroData: zoteroData,
