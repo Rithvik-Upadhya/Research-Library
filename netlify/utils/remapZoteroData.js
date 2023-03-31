@@ -12,13 +12,13 @@ function getDate(timestamp) {
 }
 
 function remapTags(tags) {
-    return tags.map((tagObj) => capitalize(tagObj.tag));
+    return tags
+        .map((tagObj) => capitalize(tagObj.tag))
+        .filter((tag) => tag.match(/favou?rites?/i) === null);
 }
 
 function checkFav(tags) {
-    return remapTags(tags)
-        .includes("Favourite")
-        .filter((tag) => tag.match(/favourite/i) === null);
+    return tags.some((tag) => /favou?rites?/i.test(tag));
 }
 
 const remapZoteroData = (patchedItems) => {
