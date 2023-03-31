@@ -180,7 +180,7 @@ section {
   margin: 50px 0;
 }
 section:first-child {
-  margin-top: clamp(120px, calc(var(--headerH) + 50px), calc(var(--headerH) + 50px));
+  margin-top: 120px;
 }
 .container {
   max-width: var(--pageWidth);
