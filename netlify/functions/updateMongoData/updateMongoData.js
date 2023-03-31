@@ -7,7 +7,7 @@ const mongoClient = new MongoClient(process.env.MONGODB_URI);
 
 const clientPromise = mongoClient.connect();
 
-export const handler = schedule("*/10 * * * *", async (event) => {
+export const handler = schedule("@hourly", async (event) => {
     const database = (await clientPromise).db(process.env.MONGODB_DATABASE);
     const collection = database.collection(process.env.MONGODB_COLLECTION);
     const newestItem = await collection
@@ -71,21 +71,26 @@ export const handler = schedule("*/10 * * * *", async (event) => {
         const splitPatches = patchedData.reduce(
             (result, currentItem) => {
                 result[
-                    currentItem.itemType === "attachment" ? "images" : "items"
+                    currentItem.itemType === "attachment"
+                        ? "attachments"
+                        : "items"
                 ].push(currentItem);
                 return result;
             },
-            { items: [], images: [] }
+            { items: [], attachments: [] }
         );
-        const remappedPatches = remapZoteroData(splitPatches.items);
-        patchItemsPayload = remappedPatches.map((remappedPatch) => ({
+        const patchItems = remapZoteroData(splitPatches.items);
+        patchItemsPayload = patchItems.map((remappedPatch) => ({
             replaceOne: {
                 filter: { key: remappedPatch.key },
                 replacement: remappedPatch,
                 upsert: true,
             },
         }));
-        patchImagesPayload = splitPatches.images.map((image) => ({
+        const patchImages = splitPatches.attachments.filter((attachment) =>
+            /[^\s]+\.(?:png||jpe?g)$/i.test(attachment.url)
+        );
+        patchImagesPayload = patchImages.map((image) => ({
             updateOne: {
                 filter: { key: image.parentItem },
                 update: {
