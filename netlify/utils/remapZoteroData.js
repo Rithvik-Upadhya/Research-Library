@@ -18,7 +18,9 @@ function remapTags(tags) {
 }
 
 function checkFav(tags) {
-    return tags.some((tag) => /favou?rites?/i.test(tag));
+    return tags
+        .map((tagObj) => capitalize(tagObj.tag))
+        .some((tag) => /favou?rites?/i.test(tag));
 }
 
 const remapZoteroData = (patchedItems) => {
