@@ -10,15 +10,9 @@ function Homepage() {
     if (!localDB) {
         localStorage.clear();
     }
-    const [zoteroData, setZoteroData] = useState(
-        localStorage.getItem("zoteroData") || []
-    );
-    const [favourites, setFavourites] = useState(
-        localStorage.getItem("favourites") || []
-    );
-    const [version, setVersion] = useState(
-        localStorage.getItem("version") || 0
-    );
+    const [zoteroData, setZoteroData] = useState(localDB.zoteroData || []);
+    const [favourites, setFavourites] = useState(localDB.favourites || []);
+    const [version, setVersion] = useState(localDB.version || 0);
     const [queries, setQueries] = useState(createQueryObj(zoteroData));
     const [matches, setMatches] = useState([]);
     const [loading, setLoading] = useState(true);
