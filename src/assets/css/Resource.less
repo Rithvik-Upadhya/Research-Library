@@ -1,4 +1,4 @@
-@import "../variables.less";
+@import "./variables.less";
 
 /*==========================
 Resource Cards
@@ -14,11 +14,13 @@ Resource Cards
     cursor: pointer;
     transition: 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     transform: scale(0.85) translateX(-7.5%);
+
     .buttonText {
         text-transform: uppercase;
         color: var(--textC);
         font-weight: 600;
         transition: 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+
         &::before {
             content: "";
             position: absolute;
@@ -28,11 +30,12 @@ Resource Cards
             margin: auto 0;
             width: 9px;
             height: 9px;
-            border-top: 2px solid var(--textC2);
-            border-right: 2px solid var(--textC2);
+            border-top: 2px solid var(--bgC);
+            border-right: 2px solid var(--bgC);
             transform: rotate(45deg);
             transition: 0.45s cubic-bezier(0.65, 0, 0.076, 1);
         }
+
         &::after {
             content: "";
             position: absolute;
@@ -46,6 +49,7 @@ Resource Cards
             transition: 0.45s cubic-bezier(0.65, 0, 0.076, 1);
         }
     }
+
     &::before {
         content: "";
         position: absolute;
@@ -55,42 +59,45 @@ Resource Cards
         margin: auto 0;
         width: 45px;
         height: 45px;
-        background-color: var(--textC);
+        background-color: var(--secondaryC);
+        box-shadow: var(--shadow2);
         border-radius: 100px;
         z-index: -1;
         transition: 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     }
-    &:hover {
+
+    &:hover,
+    &:focus {
         .buttonText {
-            color: var(--textC2);
+            color: var(--bgC);
+
             // font-weight: 500;
             &::before {
                 left: 28px;
             }
+
             &::after {
                 left: 22px;
-                background-color: var(--textC2);
+                background-color: var(--bgC);
             }
         }
+
         &::before {
             width: 100%;
         }
     }
 }
 
-#resources {
-    max-width: 900px;
-    margin: 75px auto;
-}
-
 .resource {
     display: flex;
     flex-direction: row;
     gap: 30px;
+
     @media (max-width: 699px) {
         flex-wrap: wrap;
     }
-    > img {
+
+    >img {
         width: 250px;
         min-width: 250px;
         height: 250px;
@@ -101,6 +108,7 @@ Resource Cards
         box-shadow: var(--shadow);
         border-radius: calc(var(--bdRadius) * 2);
     }
+
     padding: 30px 20px;
     border-bottom: 1px solid var(--bdC);
     line-height: 1.5em;
@@ -121,18 +129,22 @@ Resource Cards
         font-weight: 700;
         margin-bottom: 5px;
     }
+
     .title {
         font-family: var(--fontFamily);
         font-size: 1.2em;
         font-weight: 600;
         line-height: 1.8em;
     }
+
     .authors {
         font-weight: 600;
     }
+
     .publication {
         font-style: italic;
     }
+
     dialog {
         pointer-events: none;
         opacity: 0;
@@ -150,31 +162,42 @@ Resource Cards
         width: 100%;
         max-height: 80%;
 
-        .pubInfo > span {
+        .pubInfo>span {
             display: block;
             margin-bottom: 5px;
         }
 
-        > *:not(.flag):not(:last-child) {
+        >*:not(.flag):not(:last-child) {
             margin-bottom: 20px;
         }
     }
+
     dialog[open] {
         opacity: 1;
         transition: opacity 0.3s ease;
         pointer-events: inherit;
+
+        .button {
+            display: block;
+        }
     }
+
     dialog::-webkit-backdrop {
         background-color: rgba(0, 0, 0, 0.3);
     }
+
     dialog::backdrop {
         background-color: rgba(0, 0, 0, 0.3);
     }
+
     .buttons {
         display: flex;
         flex-direction: row;
         gap: 15px;
+
         .button {
+            display: none;
+
             a,
             button {
                 text-decoration: none;
@@ -198,25 +221,30 @@ Resource Cards
                 &:hover,
                 &:focus {
                     color: var(--bgC);
-                    background-color: var(--textC);
+                    background-color: var(--secondaryC);
+                    border-color: var(--secondaryC);
                 }
+
                 &:focus-visible {
-                    outline: 2px solid var(--secondaryC);
+                    outline: none;
                 }
             }
         }
     }
+
     .tags {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         grid-gap: 10px;
         gap: 10px;
+
         .tag {
             background-color: var(--bgC3);
             padding: 5px 10px;
         }
     }
+
     span.hl {
         background-color: #ffba3c;
     }

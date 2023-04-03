@@ -27,8 +27,8 @@ Resource Cards
   margin: auto 0;
   width: 9px;
   height: 9px;
-  border-top: 2px solid var(--textC2);
-  border-right: 2px solid var(--textC2);
+  border-top: 2px solid var(--bgC);
+  border-right: 2px solid var(--bgC);
   transform: rotate(45deg);
   transition: 0.45s cubic-bezier(0.65, 0, 0.076, 1);
 }
@@ -53,27 +53,28 @@ Resource Cards
   margin: auto 0;
   width: 45px;
   height: 45px;
-  background-color: var(--textC);
+  background-color: var(--secondaryC);
+  box-shadow: var(--shadow2);
   border-radius: 100px;
   z-index: -1;
   transition: 0.45s cubic-bezier(0.65, 0, 0.076, 1);
 }
-.readMore:hover .buttonText {
-  color: var(--textC2);
+.readMore:hover .buttonText,
+.readMore:focus .buttonText {
+  color: var(--bgC);
 }
-.readMore:hover .buttonText::before {
+.readMore:hover .buttonText::before,
+.readMore:focus .buttonText::before {
   left: 28px;
 }
-.readMore:hover .buttonText::after {
+.readMore:hover .buttonText::after,
+.readMore:focus .buttonText::after {
   left: 22px;
-  background-color: var(--textC2);
+  background-color: var(--bgC);
 }
-.readMore:hover::before {
+.readMore:hover::before,
+.readMore:focus::before {
   width: 100%;
-}
-#resources {
-  max-width: 900px;
-  margin: 75px auto;
 }
 .resource {
   display: flex;
@@ -151,6 +152,9 @@ Resource Cards
   transition: opacity 0.3s ease;
   pointer-events: inherit;
 }
+.resource dialog[open] .button {
+  display: block;
+}
 .resource dialog::-webkit-backdrop {
   background-color: rgba(0, 0, 0, 0.3);
 }
@@ -161,6 +165,9 @@ Resource Cards
   display: flex;
   flex-direction: row;
   gap: 15px;
+}
+.resource .buttons .button {
+  display: none;
 }
 .resource .buttons .button a,
 .resource .buttons .button button {
@@ -185,11 +192,12 @@ Resource Cards
 .resource .buttons .button a:focus,
 .resource .buttons .button button:focus {
   color: var(--bgC);
-  background-color: var(--textC);
+  background-color: var(--secondaryC);
+  border-color: var(--secondaryC);
 }
 .resource .buttons .button a:focus-visible,
 .resource .buttons .button button:focus-visible {
-  outline: 2px solid var(--secondaryC);
+  outline: none;
 }
 .resource .tags {
   display: flex;
