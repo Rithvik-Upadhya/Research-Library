@@ -4,6 +4,11 @@ import Resource from "./Resource";
 import createQueryObj from "../utils/createQueryObj";
 import reactStringReplace from "react-string-replace";
 import createRegex from "../utils/createRegex";
+import {
+	modalTrigger,
+	modalBtnClose,
+	modalBackdropClose,
+} from "../utils/modal";
 
 function Homepage() {
 	const localDB = JSON.parse(localStorage.getItem("localDB"));
@@ -235,6 +240,37 @@ function Homepage() {
 					<h1 id="tagline">
 						A <em>library of resources</em> on pastoralism
 					</h1>
+					{zoteroData.length != 0 && (
+						<>
+							<button
+								className="modalTrigger readMore"
+								onClick={() => modalTrigger("about")}>
+								<span className="buttonText">
+									About the repository
+								</span>
+							</button>
+							<dialog
+								className="modal info"
+								id="modal_about"
+								onClick={(event) =>
+									modalBackdropClose(event, "about")
+								}>
+								<h4>About the repository</h4>
+								<span style={{ height: 150 + "px" }}></span>
+								<div className="buttons">
+									<div className="button">
+										<button
+											className="modalBtnClose"
+											onClick={() =>
+												modalBtnClose("about")
+											}>
+											Close
+										</button>
+									</div>
+								</div>
+							</dialog>
+						</>
+					)}
 					{zoteroData.length != 0 && (
 						<div id="queryContainer">
 							<div id="queryInputs">
