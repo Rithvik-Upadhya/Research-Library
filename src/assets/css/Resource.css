@@ -207,13 +207,13 @@ Resource Cards
   gap: 10px;
 }
 .resource .tags .tag {
-  background-color: var(--bgC3);
+  background-color: var(--bgC);
   padding: 5px 10px;
+  border-radius: var(--bdRadius);
+  border: 1px solid var(--bdC);
+  font-size: 0.9em;
+  font-weight: 600;
 }
 .resource span.hl {
   background-color: #ffba3c;
-}
-.loading {
-  text-align: center;
-  margin: 75px auto;
 }
