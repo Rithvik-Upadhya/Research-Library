@@ -8,7 +8,6 @@ function Header() {
                     <img
                         src="images/logo.svg"
                         id="logo"
-                        className="filter"
                         alt="Centre for Pastoralism Logo"
                     />
                 </div>

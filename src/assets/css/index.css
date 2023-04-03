@@ -7,147 +7,41 @@ This file is auto generated using LESS (https://lesscss.org), a preprocessor for
 /*==========================
 Variables
 ===========================*/
+@import "css-reset.css";
 :root {
   --fontSize: 16px;
-  --primaryC: #1a1a1a;
-  --secondaryC: #db2c3a;
-  --filter: invert(7%) sepia(7%) saturate(17%) hue-rotate(347deg) brightness(101%) contrast(93%);
-  --filter2: invert(100%) sepia(19%) saturate(66%) hue-rotate(184deg) brightness(114%) contrast(87%);
-  --accentC: #47df85;
+  --primaryC: #3c2415;
+  --secondaryC: #b28c50;
   --bgC: #fff;
   --bgC2: var(--primaryC);
-  --bgC3: #f1f1f1;
-  --textC: var(--primaryC);
+  --bgC3: #f5f5f5;
+  --textC: #1a1a1a;
   --textC2: #eee;
   --fontFamily: "Bitter", Georgia, "Times New Roman", Times, serif;
   --fontFamily2: "Nunito Sans", sans-serif;
   --bdC: #1a1a1a25;
-  --pageWidth: 1100px;
+  --pageWidth: 900px;
   --bdRadius: 5px;
   --shadow: 0 0 5px 0 #1a1a1a15;
-}
-/*==========================
-CSS Reset
-===========================*/
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
-  display: block;
+  --shadow2: 0 0 5px 0 #1a1a1a40;
 }
 /*==========================
 Basic Styling
 ===========================*/
 html {
   font-size: var(--fontSize);
+  background-color: var(--bgC3);
+  background-image: url("../public/images/footer_overlay.png");
+  background-size: auto 400px;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: multiply;
+  background-position: 0px 100%;
 }
 body {
   margin: 0;
-  background-color: var(--bgC);
   color: var(--textC);
   font-family: var(--fontFamily2);
-}
-body page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 body .w-100 {
   font-weight: 100;
@@ -230,38 +124,13 @@ header #header #logo.mask {
   -webkit-mask-size: contain;
   mask-size: contain;
 }
-header #header #logo.filter {
-  filter: var(--filter);
-}
 header.scroll {
-  background-color: var(--bgC);
+  background-color: var(--bgC3);
   box-shadow: var(--shadow);
 }
 header.scroll.check.exit {
   top: calc(-1 * var(--headerH));
   transition: top 0.3s ease 2s;
-}
-/*==========================
-Footer
-===========================*/
-footer {
-  background-color: var(--primaryC);
-  padding: 50px 0;
-}
-footer #footer #footer-logo {
-  width: 150px;
-  height: 50px;
-  display: inline-block;
-}
-footer #footer #footer-logo.mask {
-  background-color: #fff;
-  -webkit-mask: url(images/logo.svg) no-repeat 50% 50%;
-  mask: url(images/logo.svg) no-repeat 50% 50%;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-}
-footer #footer #footer-logo.filter {
-  filter: var(--filter2);
 }
 /*==========================
 Fonts

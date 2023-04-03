@@ -56,6 +56,7 @@ body #queryContainer #queryInputs:focus-within #queryOptions {
 }
 body #queryContainer #queryInputs #searchBox #searchTerm {
   display: block;
+  background-color: transparent;
   width: 100%;
   padding: 10px 15px;
   height: 50px;
@@ -111,7 +112,8 @@ body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .ch
 body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .checkbox label {
   display: block;
   width: 100%;
-  padding: 8px 12px;
+  padding: 12px;
+  background-color: var(--bgC);
   border-left: 0px solid var(--secondaryC);
   transition: border 0.2s ease;
 }
@@ -129,4 +131,8 @@ body #queryContainer #queryInputs #queryOptions .checkboxesGroup .checkboxes .ch
 body #queryContainer #queryInputs #queryOptions #queryCount {
   margin: 0;
   font-weight: 600;
+}
+body #resources {
+  margin: 0 auto;
+  padding: 25px 0 100px 0;
 }
