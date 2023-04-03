@@ -59,6 +59,17 @@ body {
             font-weight: @weight;
         }
     });
+
+each(range(6), {
+    @size: (2.4em - (0.2em * @value));
+
+    h@{value} {
+        font-size: @size;
+        font-family: var(--fontFamily);
+        font-weight: 500;
+        color: var(--primaryC);
+    }
+});
 }
 
 section {
@@ -134,6 +145,100 @@ header {
     &.scroll.check.exit {
         top: calc(-1 * var(--headerH));
         transition: top 0.3s ease 2s;
+    }
+}
+
+/*==========================
+Modal
+===========================*/
+
+dialog {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0s;
+    margin: auto auto !important;
+    padding: 25px;
+    background-color: var(--bgC);
+    display: flex;
+    flex-direction: column;
+    border: none;
+    outline: none;
+    border-radius: var(--bdRadius);
+    box-shadow: var(--shadow);
+    max-width: clamp(300px, 800px, 90%);
+    width: 100%;
+    max-height: 80%;
+
+    .button {
+        display: none;
+    }
+
+    .pubInfo>span {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    >*:not(.flag):not(:last-child) {
+        margin-bottom: 20px;
+    }
+}
+
+dialog[open] {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    pointer-events: inherit;
+
+    .button {
+        display: block;
+    }
+}
+
+dialog::-webkit-backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+
+    .button {
+
+        a,
+        button {
+            text-decoration: none;
+            padding: 5px 10px;
+            color: var(--textC);
+            background-color: transparent;
+            font-weight: 600;
+            border: 2px solid var(--textC);
+            border-radius: var(--bdRadius);
+            display: flex;
+            width: -webkit-max-content;
+            width: -moz-max-content;
+            width: max-content;
+            transition: 0.2s ease;
+            line-height: 1.4em;
+            font-size: 1em;
+            font-weight: 600;
+            font-family: var(--fontFamily2);
+            cursor: pointer;
+
+            &:hover,
+            &:focus {
+                color: var(--bgC);
+                background-color: var(--secondaryC);
+                border-color: var(--secondaryC);
+            }
+
+            &:focus-visible {
+                outline: none;
+            }
+        }
     }
 }
 

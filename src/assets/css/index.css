@@ -71,6 +71,42 @@ body .w-800 {
 body .w-900 {
   font-weight: 900;
 }
+body h1 {
+  font-size: 2.2em;
+  font-family: var(--fontFamily);
+  font-weight: 500;
+  color: var(--primaryC);
+}
+body h2 {
+  font-size: 2em;
+  font-family: var(--fontFamily);
+  font-weight: 500;
+  color: var(--primaryC);
+}
+body h3 {
+  font-size: 1.8em;
+  font-family: var(--fontFamily);
+  font-weight: 500;
+  color: var(--primaryC);
+}
+body h4 {
+  font-size: 1.6em;
+  font-family: var(--fontFamily);
+  font-weight: 500;
+  color: var(--primaryC);
+}
+body h5 {
+  font-size: 1.4em;
+  font-family: var(--fontFamily);
+  font-weight: 500;
+  color: var(--primaryC);
+}
+body h6 {
+  font-size: 1.2em;
+  font-family: var(--fontFamily);
+  font-weight: 500;
+  color: var(--primaryC);
+}
 section {
   margin: 50px 0;
 }
@@ -132,6 +168,85 @@ header.scroll {
 header.scroll.check.exit {
   top: calc(-1 * var(--headerH));
   transition: top 0.3s ease 2s;
+}
+/*==========================
+Modal
+===========================*/
+dialog {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0s;
+  margin: auto auto !important;
+  padding: 25px;
+  background-color: var(--bgC);
+  display: flex;
+  flex-direction: column;
+  border: none;
+  outline: none;
+  border-radius: var(--bdRadius);
+  box-shadow: var(--shadow);
+  max-width: clamp(300px, 800px, 90%);
+  width: 100%;
+  max-height: 80%;
+}
+dialog .button {
+  display: none;
+}
+dialog .pubInfo > span {
+  display: block;
+  margin-bottom: 5px;
+}
+dialog > *:not(.flag):not(:last-child) {
+  margin-bottom: 20px;
+}
+dialog[open] {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: inherit;
+}
+dialog[open] .button {
+  display: block;
+}
+dialog::-webkit-backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+.buttons .button a,
+.buttons .button button {
+  text-decoration: none;
+  padding: 5px 10px;
+  color: var(--textC);
+  background-color: transparent;
+  border: 2px solid var(--textC);
+  border-radius: var(--bdRadius);
+  display: flex;
+  width: -webkit-max-content;
+  width: max-content;
+  transition: 0.2s ease;
+  line-height: 1.4em;
+  font-size: 1em;
+  font-weight: 600;
+  font-family: var(--fontFamily2);
+  cursor: pointer;
+}
+.buttons .button a:hover,
+.buttons .button button:hover,
+.buttons .button a:focus,
+.buttons .button button:focus {
+  color: var(--bgC);
+  background-color: var(--secondaryC);
+  border-color: var(--secondaryC);
+}
+.buttons .button a:focus-visible,
+.buttons .button button:focus-visible {
+  outline: none;
 }
 /*==========================
 Fonts
