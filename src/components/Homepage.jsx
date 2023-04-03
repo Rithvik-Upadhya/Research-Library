@@ -284,7 +284,17 @@ function Homepage() {
 			<section id="resources">
 				<div className="container">
 					{loading === true ? (
-						<div className="loading">Loading</div>
+						<div className="loading">
+							<img
+								src="/images/loading.svg"
+								className="loading__icon"
+								alt=""
+							/>
+							<span className="loading__text">
+								Fetching resources,
+								<br /> hold on to your papers!
+							</span>
+						</div>
 					) : loading === false ? (
 						<>{resourceEls}</>
 					) : (
@@ -293,6 +303,11 @@ function Homepage() {
 							Please reload or try again later.
 						</div>
 					)}
+					<a
+						href="#"
+						title="Scroll to top"
+						aria-label="Scroll to top"
+						className="scrollToTop"></a>
 				</div>
 			</section>
 		</>

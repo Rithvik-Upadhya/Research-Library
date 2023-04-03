@@ -31,12 +31,13 @@ Basic Styling
 html {
   font-size: var(--fontSize);
   background-color: var(--bgC3);
-  background-image: url("../../../public/images/footer_overlay.png");
+  background-image: url("/images/footer_overlay.png");
   background-size: auto 400px;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-blend-mode: multiply;
   background-position: 0px 100%;
+  scroll-behavior: smooth;
 }
 body {
   margin: 0;
