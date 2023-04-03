@@ -242,20 +242,22 @@ function Homepage() {
 					</h1>
 					{zoteroData.length != 0 && (
 						<>
-							<button
-								className="modalTrigger readMore"
-								onClick={() => modalTrigger("about")}>
-								<span className="buttonText">
-									About the repository
-								</span>
-							</button>
+							<div className="about__button">
+								<button
+									className="modalTrigger readMore"
+									onClick={() => modalTrigger("about")}>
+									<span className="buttonText">
+										About the library
+									</span>
+								</button>
+							</div>
 							<dialog
 								className="modal info"
 								id="modal_about"
 								onClick={(event) =>
 									modalBackdropClose(event, "about")
 								}>
-								<h4>About the repository</h4>
+								<h4>About the library</h4>
 								<span style={{ height: 150 + "px" }}></span>
 								<div className="buttons">
 									<div className="button">

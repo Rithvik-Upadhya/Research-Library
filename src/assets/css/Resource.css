@@ -16,6 +16,7 @@ Resource Cards
   text-transform: uppercase;
   color: var(--textC);
   font-weight: 600;
+  letter-spacing: 0.1em;
   transition: 0.45s cubic-bezier(0.65, 0, 0.076, 1);
 }
 .readMore .buttonText::before {
