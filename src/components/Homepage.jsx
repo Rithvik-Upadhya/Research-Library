@@ -247,7 +247,7 @@ function Homepage() {
 									className="modalTrigger readMore"
 									onClick={() => modalTrigger("about")}>
 									<span className="buttonText">
-										About the library
+										About this library
 									</span>
 								</button>
 							</div>
@@ -257,7 +257,7 @@ function Homepage() {
 								onClick={(event) =>
 									modalBackdropClose(event, "about")
 								}>
-								<h4>About the library</h4>
+								<h4>About this library</h4>
 								<span style={{ height: 150 + "px" }}></span>
 								<div className="buttons">
 									<div className="button">
