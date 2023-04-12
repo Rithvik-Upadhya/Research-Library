@@ -2,7 +2,7 @@
 Sticky Header
 ===========================*/
 
-const MyStickyHeader = true,
+const MyStickyHeader = false,
 	header = document.querySelector("header"),
 	doc = document.querySelector(":root"),
 	scrollToTopBtn = document.querySelector(".scrollToTop"),

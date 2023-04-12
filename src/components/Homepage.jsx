@@ -258,7 +258,41 @@ function Homepage() {
 									modalBackdropClose(event, "about")
 								}>
 								<h4>About this library</h4>
-								<span style={{ height: 150 + "px" }}></span>
+								<p>
+									Pastoralism is a topic that hasn't received
+									much attention in published works, and what
+									little is available is often difficult to
+									locate. This is especially true for specific
+									areas such as pastoral commodity production,
+									economics, mobility, language, culture, and
+									politics. At CfP, we continuously review and
+									catalog existing works on pastoralism within
+									our in-house repository. However, we
+									recognised the need to create a publicly
+									accessible resource where individuals
+									interested in pastoralism can easily browse
+									through academic publications, audio-visual
+									recordings, films, popular articles, policy
+									and legal documents, and more. Whenever
+									possible, we provide access to the
+									publication or a link to the author or
+									publisher's page. Unfortunately, we cannot
+									share copies of these publications.
+								</p>
+								<p>
+									You can start by typing a word, phrase,
+									author name, or publication, and you can
+									refine your search by selecting a specific
+									format (book, blog post, magazine article,
+									journal paper, etc.) and/or a keyword. We
+									update the library as frequently as
+									possible, so if your search doesn't yield
+									any results, please check back later.
+								</p>
+								<p>
+									Thanks, and welcome to the CfP’s Library of
+									Resources on Pastoralism!
+								</p>
 								<div className="buttons">
 									<div className="button">
 										<button
