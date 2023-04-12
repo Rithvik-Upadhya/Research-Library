@@ -6,6 +6,38 @@ Homepage
 
 body {
     #banner {
+        #modal_about {
+
+            @media @s-nm {
+                padding: 30px;
+            }
+
+            h4 {
+                font-size: 2em;
+                margin-bottom: 30px;
+                position: relative;
+                width: -webkit-max-content;
+                width: -moz-max-content;
+                width: max-content;
+                padding: 10px 20px;
+
+                @media @s-m {
+                    font-size: 1.8em;
+                }
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    z-index: -1;
+                    width: 5px;
+                    height: 100%;
+                    background-color: var(--secondaryC);
+                    bottom: 0;
+                    left: 0;
+                }
+            }
+        }
+
         .about__button {
             margin: 30px auto;
             width: -webkit-max-content;
