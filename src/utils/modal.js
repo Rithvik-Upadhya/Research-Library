@@ -1,6 +1,7 @@
 function modalTrigger(key) {
 	const modal = document.getElementById(`modal_${key}`);
 	modal.showModal();
+	modal.scrollTo(0, 0);
 }
 function modalBtnClose(key) {
 	const modal = document.getElementById(`modal_${key}`);
