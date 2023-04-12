@@ -1,5 +1,5 @@
 /*==========================
-Sticky Header
+Handle scroll functions
 ===========================*/
 
 const MyStickyHeader = false,
@@ -10,16 +10,26 @@ const MyStickyHeader = false,
 
 let lastScrollTop = 0;
 
-doc.style.setProperty("--headerH", headerHeight + "px");
-
-if (MyStickyHeader) {
-	header.style.setProperty("position", "fixed");
+function debounce(func, wait = 10, immediate = true) {
+	var timeout;
+	return function () {
+		var context = this,
+			args = arguments;
+		var later = function () {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
 }
 
-if (MyStickyHeader) {
-	window.addEventListener("scroll", function () {
-		scrollTop = window.pageYOffset;
+function handleScroll() {
+	scrollTop = window.pageYOffset;
 
+	if (MyStickyHeader) {
 		if (scrollTop > 0) {
 			header.classList.add("scroll");
 		} else {
@@ -28,10 +38,8 @@ if (MyStickyHeader) {
 
 		if (scrollTop > 300) {
 			header.classList.add("check");
-			scrollToTopBtn.classList.add("show");
 		} else {
 			header.classList.remove("check");
-			scrollToTopBtn.classList.remove("show");
 		}
 
 		if (scrollTop > 300 && scrollTop > lastScrollTop) {
@@ -39,7 +47,20 @@ if (MyStickyHeader) {
 		} else {
 			header.classList.remove("exit");
 		}
+	}
 
-		lastScrollTop = scrollTop;
-	});
+	if (scrollTop > 300) {
+		scrollToTopBtn.classList.add("show");
+	} else {
+		scrollToTopBtn.classList.remove("show");
+	}
+
+	lastScrollTop = scrollTop;
 }
+
+if (MyStickyHeader) {
+	doc.style.setProperty("--headerH", headerHeight + "px");
+	header.style.setProperty("position", "fixed");
+}
+
+window.addEventListener("scroll", debounce(handleScroll));
