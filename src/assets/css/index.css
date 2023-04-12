@@ -189,6 +189,7 @@ dialog {
   border-radius: var(--bdRadius);
   box-shadow: var(--shadow);
   max-width: clamp(300px, 800px, 90%);
+  z-index: 100;
   width: 100%;
   max-height: 90%;
 }
