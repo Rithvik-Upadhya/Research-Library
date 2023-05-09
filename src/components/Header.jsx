@@ -5,7 +5,9 @@ function Header() {
 		<header>
 			<div className="container" id="header">
 				<div className="header-left">
-					<a href="" aria-label="Load Homepage">
+					<a
+						href="https://centreforpastoralism.org/"
+						aria-label="Go to main website">
 						<img src="images/logo.svg" id="logo" alt="" />
 					</a>
 				</div>
